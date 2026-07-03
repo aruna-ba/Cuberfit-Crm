@@ -1,0 +1,205 @@
+import type { AccountVM } from "@/lib/types";
+
+/**
+ * Données de démonstration pour la maquette des écrans P0-1.
+ * À remplacer par de vraies requêtes Prisma une fois le schéma validé
+ * avec Awa et Fatou Sakho et une base Postgres branchée.
+ */
+export const mockAccounts: AccountVM[] = [
+  {
+    id: "acc_passionne_1",
+    segment: "PASSIONNE",
+    nom: "Aïssatou Diop",
+    niveauAccompagnement: "TECH_TOUCH",
+    phaseLifecycle: "ADOPTION",
+    healthScoreActuel: 82,
+    healthScoreStatut: "VERT",
+    csmAssigne: "Fatou Sakho",
+    dateCreation: "2026-02-10",
+    contacts: [],
+    passionneProfile: {
+      email: "aissatou.diop@example.sn",
+      telephone: "+221 77 123 45 67",
+      ville: "Dakar",
+      statutAbonnement: "ACCESS",
+      creditsAchetes: 120,
+      creditsConsommes: 96,
+      creditsDormants: 8,
+      nombreNoShow: 1,
+      nombreAnnulations: 2,
+      npsScore: 62,
+      dateDerniereActivite: "2026-07-01",
+      coachsAssocies: [{ id: "acc_partenaire_2", nom: "Coach Moussa Fall" }],
+    },
+    interactions: [
+      { id: "int_1", type: "ACHAT", titre: "Achat pack 20 crédits", dateInteraction: "2026-06-15", creePar: "App Access" },
+      { id: "int_2", type: "APPEL_AGENT_VOCAL", titre: "Question sur crédits dormants", dateInteraction: "2026-06-20", creePar: "Agent vocal ElevenLabs" },
+      { id: "int_3", type: "CAMPAGNE", titre: "Campagne relance J+7 onboarding", dateInteraction: "2026-02-17", creePar: "N8N" },
+    ],
+    healthScoreHistorique: [
+      { id: "hs_1", score: 74, statut: "ORANGE", dateCalcul: "2026-05-01", detailCriteres: [] },
+      { id: "hs_2", score: 82, statut: "VERT", dateCalcul: "2026-07-01", detailCriteres: [
+        { critere: "Fréquence d'utilisation", poidsPct: 35, valeur: "5 séances/mois" },
+        { critere: "Dernière activité / récence", poidsPct: 25, valeur: "il y a 2 jours" },
+        { critere: "NPS / satisfaction", poidsPct: 20, valeur: "62" },
+        { critere: "No-show & annulations", poidsPct: 10, valeur: "1 no-show, 2 annulations" },
+        { critere: "Tickets ouverts", poidsPct: 10, valeur: "0" },
+      ] },
+    ],
+  },
+  {
+    id: "acc_passionne_2",
+    segment: "PASSIONNE",
+    nom: "Ibrahima Ndiaye",
+    niveauAccompagnement: "TECH_TOUCH",
+    phaseLifecycle: "A_RISQUE",
+    healthScoreActuel: 34,
+    healthScoreStatut: "ROUGE",
+    csmAssigne: "Fatou Sakho",
+    dateCreation: "2026-03-02",
+    contacts: [],
+    passionneProfile: {
+      email: "ibrahima.ndiaye@example.sn",
+      telephone: "+221 76 987 65 43",
+      ville: "Dakar",
+      statutAbonnement: "ACCESS",
+      creditsAchetes: 40,
+      creditsConsommes: 12,
+      creditsDormants: 28,
+      nombreNoShow: 4,
+      nombreAnnulations: 3,
+      npsScore: 10,
+      dateDerniereActivite: "2026-06-05",
+      coachsAssocies: [],
+    },
+    interactions: [
+      { id: "int_4", type: "TICKET", titre: "Réclamation : séance annulée sans remboursement", dateInteraction: "2026-06-18", creePar: "Agent vocal ElevenLabs" },
+    ],
+    healthScoreHistorique: [
+      { id: "hs_3", score: 58, statut: "ORANGE", dateCalcul: "2026-05-01", detailCriteres: [] },
+      { id: "hs_4", score: 34, statut: "ROUGE", dateCalcul: "2026-07-01", detailCriteres: [] },
+    ],
+  },
+  {
+    id: "acc_partenaire_1",
+    segment: "PARTENAIRE",
+    nom: "Dakar Fitness Club",
+    niveauAccompagnement: "HIGH_TOUCH",
+    phaseLifecycle: "EXPANSION",
+    healthScoreActuel: 76,
+    healthScoreStatut: "VERT",
+    csmAssigne: "Marieme Mbaye",
+    dateCreation: "2025-11-20",
+    contacts: [
+      { id: "c_1", prenom: "Cheikh", nom: "Sarr", email: "cheikh.sarr@dakarfitness.sn", telephone: "+221 78 111 22 33", role: "Gérant", estContactPrincipal: true },
+    ],
+    partenaireProfile: {
+      typeActivite: "SALLE",
+      ville: "Dakar",
+      adresse: "Route de Ouakam, Dakar",
+      statutProfilCompletudePct: 95,
+      tauxRemplissageMoyenPct: 71,
+      reservationsRecuesTotal: 842,
+      satisfactionScore: 8,
+      dateSignature: "2025-11-20",
+    },
+    interactions: [
+      { id: "int_5", type: "NOTE", titre: "Point trimestriel Q2 réalisé", dateInteraction: "2026-06-10", creePar: "Marieme Mbaye" },
+    ],
+    healthScoreHistorique: [
+      { id: "hs_5", score: 68, statut: "ORANGE", dateCalcul: "2026-04-01", detailCriteres: [] },
+      { id: "hs_6", score: 76, statut: "VERT", dateCalcul: "2026-07-01", detailCriteres: [] },
+    ],
+  },
+  {
+    id: "acc_partenaire_2",
+    segment: "PARTENAIRE",
+    nom: "Coach Moussa Fall",
+    niveauAccompagnement: "LOW_TOUCH",
+    phaseLifecycle: "ADOPTION",
+    healthScoreActuel: 55,
+    healthScoreStatut: "ORANGE",
+    csmAssigne: "Marieme Mbaye",
+    dateCreation: "2026-01-15",
+    contacts: [],
+    partenaireProfile: {
+      typeActivite: "COACH_INDEPENDANT",
+      ville: "Dakar",
+      statutProfilCompletudePct: 60,
+      tauxRemplissageMoyenPct: 40,
+      reservationsRecuesTotal: 63,
+      satisfactionScore: 7,
+      dateSignature: "2026-01-15",
+    },
+    interactions: [],
+    healthScoreHistorique: [
+      { id: "hs_7", score: 55, statut: "ORANGE", dateCalcul: "2026-07-01", detailCriteres: [] },
+    ],
+  },
+  {
+    id: "acc_entreprise_1",
+    segment: "ENTREPRISE_QVT",
+    nom: "Sonatel",
+    niveauAccompagnement: "HIGH_TOUCH",
+    phaseLifecycle: "EXPANSION",
+    healthScoreActuel: 88,
+    healthScoreStatut: "VERT",
+    csmAssigne: "Harouna Ba",
+    dateCreation: "2025-09-01",
+    contacts: [
+      { id: "c_2", prenom: "Fatoumata", nom: "Cissé", email: "f.cisse@sonatel.sn", telephone: "+221 33 859 00 00", role: "Interlocuteur RH", estContactPrincipal: true },
+    ],
+    entrepriseQvtProfile: {
+      secteurActivite: "Télécommunications",
+      tailleEffectif: 1800,
+      budgetAllouAnnuel: 18000,
+      budgetConsommeAnnuel: 12400,
+      pctEmployesActives: 64,
+      pctEmployesActifsMensuels: 48,
+      dateSignature: "2025-09-01",
+      dateRenouvellement: "2026-09-01",
+    },
+    interactions: [
+      { id: "int_6", type: "NOTE", titre: "Revue DRH semestrielle", dateInteraction: "2026-06-01", creePar: "Harouna Ba" },
+      { id: "int_7", type: "CAMPAGNE", titre: "Campagne interne relance collaborateurs inactifs", dateInteraction: "2026-05-15", creePar: "N8N" },
+    ],
+    healthScoreHistorique: [
+      { id: "hs_8", score: 81, statut: "VERT", dateCalcul: "2026-04-01", detailCriteres: [] },
+      { id: "hs_9", score: 88, statut: "VERT", dateCalcul: "2026-07-01", detailCriteres: [] },
+    ],
+  },
+  {
+    id: "acc_entreprise_2",
+    segment: "ENTREPRISE_QVT",
+    nom: "Teranga Assurances",
+    niveauAccompagnement: "LOW_TOUCH",
+    phaseLifecycle: "ONBOARDING",
+    healthScoreActuel: 45,
+    healthScoreStatut: "ORANGE",
+    csmAssigne: "Harouna Ba",
+    dateCreation: "2026-06-01",
+    contacts: [
+      { id: "c_3", prenom: "Abdou", nom: "Diallo", email: "a.diallo@teranga-assurances.sn", telephone: "+221 33 822 11 11", role: "Interlocuteur RH", estContactPrincipal: true },
+    ],
+    entrepriseQvtProfile: {
+      secteurActivite: "Assurance",
+      tailleEffectif: 220,
+      budgetAllouAnnuel: 4000,
+      budgetConsommeAnnuel: 600,
+      pctEmployesActives: 22,
+      pctEmployesActifsMensuels: 15,
+      dateSignature: "2026-06-01",
+      dateRenouvellement: "2027-06-01",
+    },
+    interactions: [
+      { id: "int_8", type: "NOTE", titre: "Kick-off onboarding + webinaire employés planifié", dateInteraction: "2026-06-05", creePar: "Harouna Ba" },
+    ],
+    healthScoreHistorique: [
+      { id: "hs_10", score: 45, statut: "ORANGE", dateCalcul: "2026-07-01", detailCriteres: [] },
+    ],
+  },
+];
+
+export function getAccountById(id: string): AccountVM | undefined {
+  return mockAccounts.find((a) => a.id === id);
+}

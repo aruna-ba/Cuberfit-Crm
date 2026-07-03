@@ -1,0 +1,301 @@
+// Schema Prisma — CRM Cuberfit
+// Module P0-1 : Contacts & comptes (+ tables de journalisation Vue 360° :
+// Interaction et HealthScoreSnapshot, explicitement demandées dans le
+// périmètre P0-1 pour l'historique complet du compte).
+//
+// Les moteurs de calcul (Health Score P0-3, tickets/SLA P0-5, campagnes P0-4)
+// seront ajoutés aux modules suivants — ce schéma ne pose que les fondations
+// et les points d'accroche (relations, journal d'événements) dont ils auront besoin.
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ---------------------------------------------------------------------------
+// ENUMS
+// ---------------------------------------------------------------------------
+
+/// Les 3 personas canoniques de la stratégie Customer Success Cuberfit.
+enum Segment {
+  PASSIONNE
+  PARTENAIRE
+  ENTREPRISE_QVT
+}
+
+/// Niveau d'accompagnement CS — détermine le mode de suivi (automatisé vs dédié).
+enum NiveauAccompagnement {
+  TECH_TOUCH
+  LOW_TOUCH
+  HIGH_TOUCH
+}
+
+/// Phase du lifecycle client (module P0-2, référencée dès P0-1 pour la vue liste/fiche).
+enum PhaseLifecycle {
+  ONBOARDING
+  ADOPTION
+  EXPANSION
+  A_RISQUE
+  CHURN
+}
+
+/// Statut couleur du Health Score (seuils définis dans le module P0-3).
+enum StatutHealthScore {
+  VERT
+  ORANGE
+  ROUGE
+}
+
+enum StatutAbonnement {
+  AUCUN
+  ACCESS
+  PLAY
+  ACCESS_PLAY
+}
+
+enum TypeActivitePartenaire {
+  SALLE
+  STUDIO
+  COACH_INDEPENDANT
+  ESPACE_BIEN_ETRE
+}
+
+/// Type d'événement journalisé dans la timeline Vue 360° d'un compte.
+enum TypeInteraction {
+  ACHAT
+  TICKET
+  CAMPAGNE
+  APPEL_AGENT_VOCAL
+  HEALTH_SCORE_CHANGE
+  NOTE
+}
+
+enum RoleUtilisateur {
+  ADMIN
+  CSM_ENTREPRISE
+  CSM_PARTENAIRE
+  CS_OPS_SUPPORT
+  SALES_BIZDEV
+  LECTURE_SEULE
+}
+
+// ---------------------------------------------------------------------------
+// UTILISATEURS INTERNES CRM (rôles — voir section 4 du prompt source)
+// ---------------------------------------------------------------------------
+
+model UtilisateurCRM {
+  id            String          @id @default(cuid())
+  prenom        String
+  nom           String
+  email         String          @unique
+  role          RoleUtilisateur
+  actif         Boolean         @default(true)
+  dateCreation  DateTime        @default(now())
+
+  comptesGeres  Account[]       @relation("CSMAssigne")
+
+  @@map("utilisateurs_crm")
+}
+
+// ---------------------------------------------------------------------------
+// ACCOUNT — entité pivot commune aux 3 segments (façon "Account" Salesforce)
+// ---------------------------------------------------------------------------
+
+model Account {
+  id                    String                @id @default(cuid())
+  segment               Segment
+  nom                   String
+  niveauAccompagnement  NiveauAccompagnement
+  phaseLifecycle        PhaseLifecycle        @default(ONBOARDING)
+
+  // Dénormalisé pour affichage rapide (liste comptes, dashboard) ; la valeur
+  // de référence reste le dernier HealthScoreSnapshot. Recalculé par le
+  // moteur du module P0-3 à chaque nouveau snapshot.
+  healthScoreActuel     Int?
+  healthScoreStatut     StatutHealthScore?
+
+  csmAssigneId          String?
+  csmAssigne            UtilisateurCRM?       @relation("CSMAssigne", fields: [csmAssigneId], references: [id])
+
+  dateCreation          DateTime              @default(now())
+  dateDerniereMaj       DateTime              @updatedAt
+
+  contacts              Contact[]
+  interactions          Interaction[]
+  healthScoreHistorique HealthScoreSnapshot[]
+
+  passionneProfile      PassionneProfile?
+  partenaireProfile     PartenaireProfile?
+  entrepriseQvtProfile  EntrepriseQvtProfile?
+
+  // Un Passionné peut avoir plusieurs coachs associés ; un coach (compte
+  // Partenaire de type COACH_INDEPENDANT) peut suivre plusieurs Passionnés.
+  coachsAssocies        CoachAssociation[]    @relation("PassionneCoachs")
+  clientsSuivis         CoachAssociation[]    @relation("CoachPassionnes")
+
+  @@index([segment])
+  @@index([phaseLifecycle])
+  @@index([healthScoreStatut])
+  @@map("accounts")
+}
+
+/// Personne physique rattachée à un compte (interlocuteur RH, gérant de salle,
+/// contact secondaire...). Pour les Passionnés, l'identité vit directement
+/// sur PassionneProfile puisque le compte EST la personne.
+model Contact {
+  id                    String    @id @default(cuid())
+  accountId             String
+  account               Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  prenom                String
+  nom                   String
+  email                 String?
+  telephone             String?
+  role                  String?   // ex: "Interlocuteur RH", "Gérant de salle"
+  estContactPrincipal   Boolean   @default(false)
+
+  dateCreation          DateTime  @default(now())
+
+  @@index([accountId])
+  @@map("contacts")
+}
+
+/// Association Passionné <-> Coach (compte Partenaire de type COACH_INDEPENDANT).
+model CoachAssociation {
+  id                  String    @id @default(cuid())
+
+  passionneAccountId  String
+  passionneAccount    Account   @relation("PassionneCoachs", fields: [passionneAccountId], references: [id], onDelete: Cascade)
+
+  coachAccountId      String
+  coachAccount        Account   @relation("CoachPassionnes", fields: [coachAccountId], references: [id], onDelete: Cascade)
+
+  dateDebut           DateTime  @default(now())
+  actif               Boolean   @default(true)
+
+  @@unique([passionneAccountId, coachAccountId])
+  @@map("coach_associations")
+}
+
+// ---------------------------------------------------------------------------
+// FICHES SPÉCIFIQUES PAR SEGMENT (1-1 avec Account)
+// ---------------------------------------------------------------------------
+
+/// Fiche Passionné (B2C) — utilisateur final de l'app Access.
+model PassionneProfile {
+  id                    String            @id @default(cuid())
+  accountId             String            @unique
+  account               Account           @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  email                 String            @unique
+  telephone             String?
+  dateNaissance         DateTime?
+  ville                 String?
+
+  statutAbonnement      StatutAbonnement  @default(AUCUN)
+
+  // Historique crédits
+  creditsAchetes        Int               @default(0)
+  creditsConsommes      Int               @default(0)
+  creditsDormants       Int               @default(0)
+
+  // No-show & annulations (entrent dans le Health Score, poids 10%)
+  nombreNoShow          Int               @default(0)
+  nombreAnnulations     Int               @default(0)
+
+  // NPS le plus récent déclaré (échelle -100 à 100 ; à confirmer avec Awa/Fatou)
+  npsScore              Int?
+
+  dateDerniereActivite  DateTime?
+
+  @@map("passionne_profiles")
+}
+
+/// Fiche Partenaire (B2B2C) — salle, studio, espace bien-être ou coach indépendant.
+model PartenaireProfile {
+  id                          String                  @id @default(cuid())
+  accountId                   String                  @unique
+  account                     Account                 @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  typeActivite                TypeActivitePartenaire
+  ville                       String?
+  adresse                     String?
+
+  statutProfilCompletudePct   Int                     @default(0) // 0-100
+  tauxRemplissageMoyenPct     Int?                    // 0-100
+  reservationsRecuesTotal     Int                     @default(0)
+
+  // Satisfaction déclarée par le partenaire (échelle 0-10 ; à confirmer)
+  satisfactionScore           Int?
+
+  dateSignature               DateTime?
+
+  @@map("partenaire_profiles")
+}
+
+/// Fiche Entreprise QVT (B2B) — budget qualité de vie au travail.
+model EntrepriseQvtProfile {
+  id                          String    @id @default(cuid())
+  accountId                   String    @unique
+  account                     Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  secteurActivite             String?
+  tailleEffectif              Int?
+
+  budgetAllouAnnuel           Decimal?  @db.Decimal(12, 2)
+  budgetConsommeAnnuel        Decimal?  @db.Decimal(12, 2)
+
+  pctEmployesActives          Int?      // 0-100, activés au moins une fois
+  pctEmployesActifsMensuels   Int?      // 0-100, actifs sur le mois en cours
+
+  dateSignature               DateTime?
+  dateRenouvellement          DateTime?
+
+  @@map("entreprise_qvt_profiles")
+}
+
+// ---------------------------------------------------------------------------
+// JOURNAL D'ÉVÉNEMENTS — alimente la Vue 360° du compte (spec P0-1)
+// ---------------------------------------------------------------------------
+
+/// Historique complet des interactions d'un compte : achats, tickets,
+/// campagnes reçues, appels agent vocal. Les modules P0-4/P0-5 écriront ici ;
+/// P0-1 ne fait que poser la table pour que la Vue 360° ait une timeline.
+model Interaction {
+  id               String           @id @default(cuid())
+  accountId        String
+  account          Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  type             TypeInteraction
+  titre            String
+  description      String?
+  metadata         Json?            // détails spécifiques au type (ex: id ticket, canal, montant)
+
+  dateInteraction  DateTime         @default(now())
+  creePar          String?          // nom utilisateur CRM ou "Agent vocal ElevenLabs"
+
+  @@index([accountId, dateInteraction])
+  @@map("interactions")
+}
+
+/// Snapshot du Health Score à un instant T, pour tracer "Health Score dans le
+/// temps" en Vue 360°. Le calcul lui-même (pondérations, seuils) est le
+/// moteur du module P0-3 — ici on ne stocke que le résultat historisé.
+model HealthScoreSnapshot {
+  id              String             @id @default(cuid())
+  accountId       String
+  account         Account            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  score           Int                // 0-100
+  statut          StatutHealthScore
+  detailCriteres  Json               // décomposition par critère pondéré (P0-3)
+
+  dateCalcul      DateTime           @default(now())
+
+  @@index([accountId, dateCalcul])
+  @@map("health_score_snapshots")
+}
