@@ -11,6 +11,7 @@ import type {
   StatutPlaybookExecution,
   TypeActionEtape,
   CanalCommunication,
+  CritereRisqueScore,
 } from "@/generated/prisma/enums";
 
 export const segmentLabel: Record<Segment, string> = {
@@ -126,4 +127,25 @@ export const canalCommunicationLabel: Record<CanalCommunication, string> = {
   WHATSAPP: "WhatsApp",
   APPEL: "Appel",
   AUCUN: "—",
+};
+
+// ---------------------------------------------------------------------------
+// Module P0-3 — Score de risque & churn
+// ---------------------------------------------------------------------------
+
+export const critereRisqueScoreLabel: Record<CritereRisqueScore, string> = {
+  FREQUENCE_UTILISATION: "Fréquence d'utilisation",
+  DERNIERE_ACTIVITE: "Dernière activité / récence",
+  NPS_SATISFACTION: "NPS / satisfaction",
+  NO_SHOW_ANNULATIONS: "No-show & annulations",
+  RESERVATIONS_VIA_CUBERFIT: "Réservations via Cuberfit",
+  TAUX_REMPLISSAGE_MOYEN: "Taux de remplissage moyen",
+  SATISFACTION_PARTENAIRE: "Satisfaction partenaire",
+  ACTIVITE_COMPTE: "Activité du compte",
+  TICKETS_OUVERTS: "Tickets ouverts",
+  PCT_EMPLOYES_ACTIFS_MENSUELS: "% employés actifs mensuels",
+  PCT_EMPLOYES_ACTIVES: "% employés activés",
+  TENDANCE_USAGE: "Tendance d'usage",
+  BUDGET_CONSOMME: "Budget consommé",
+  RENOUVELLEMENT_PROBABLE: "Renouvellement probable",
 };
