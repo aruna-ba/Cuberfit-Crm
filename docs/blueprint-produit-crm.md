@@ -61,6 +61,25 @@ fournis le 2026-07-03 (`Vision et cadrage produit`, `Mapping fonctionnel`,
   navigation réelle observée : Tableau de bord, Lieux, Activités, Calendrier,
   Finances, Équipes, Assistance, Mes paramètres.
 
+**État d'avancement (mis à jour le 2026-07-07) :** le scope P0 complet du
+prompt source est livré — P0-1 Contacts & comptes, P0-2 Onboarding &
+lifecycle, P0-3 Score de risque & churn, P0-4 Communication multicanale,
+P0-5 Tickets & support (PRs #1 à #7, toutes mergées sur `main`). Ce document
+reste la carte d'ensemble pour le P1 (Pipeline, Analytics avancé,
+Administration) — les sections ci-dessous indiquent module par module ce qui
+est réellement construit (`✅ livré`) vs ce qui reste à faire.
+
+**Document compagnon :** un PRD complet pour Cuberfit Access (le produit,
+pas le CRM) a été rédigé le 2026-07-07 à partir du Vision Book, de l'AI
+Roadmap et de l'AI Architecture Blueprint — voir `Cuberfit_Access_PRD.docx`.
+Sa section 15 (Risques & arbitrages) signale un point pertinent pour la
+suite de ce blueprint : l'organisation Customer Experience réelle (Vision
+Book) définit des rôles plus riches que la liste générique de ce document —
+notamment un **Activation Manager** côté Partenaires avec un parcours en 7
+étapes détaillé, et un **Account Manager** côté Corporate post-signature. À
+réconcilier avec la section 4 (Fiche Commercial) et la section 5.1 (Pipeline
+Partenaires) avant de construire le P1.
+
 **Faits structurants extraits de ces documents (repris tels quels dans les
 choix ci-dessous) :**
 - Personas confirmés : Awa Diallo (Passionnée B2C), Fatou Ndiaye (Coach
@@ -185,22 +204,32 @@ même table.
 - **Prévisionnel de revenu** — forecast pondéré par probabilité d'étape.
 
 ### Marketing
-- **Campagnes** — liste + créateur (audience, canal, template, planification).
-- **Templates par segment/phase** — onboarding / adoption / expansion / crise,
-  déclinés Passionnés / Partenaires / QVT (cf. module P0-4 déjà cadré).
-- **Séquences d'automatisation** — connectées N8N (relances J+3/J+7, etc.).
-- **Performance par canal** — email, SMS, WhatsApp Business (LAM).
-- **Segmentation & audiences** — constructeur de segments réutilisables.
+- ✅ **Campagnes** *(livré en P0-4 — `/campagnes`, `/campagnes/[id]`)* — liste
+  + détail avec suivi de performance par statut d'envoi (envoyé/livré/lu/
+  cliqué/échec) et log des envois par compte.
+- ✅ **Templates par segment/phase** *(livré en P0-4 — `/templates`)* —
+  onboarding / adoption / expansion / crise, déclinés Passionnés /
+  Partenaires / QVT. Réutilisés par les relances automatiques des playbooks
+  P0-2 (`PlaybookEtape.templateId`).
+- **Créateur de campagne** — pas encore construit (les campagnes de démo sont
+  actuellement des données de mock, pas un formulaire de création).
+- **Séquences d'automatisation** — connectées N8N (relances J+3/J+7, etc.) —
+  point d'intégration documenté, N8N lui-même non branché.
+- **Segmentation & audiences** — constructeur de segments réutilisables — pas
+  construit (le ciblage actuel se limite à segment + phase sur `Campagne`).
 
 ### Support
-- **File de tickets** *(cadré en P0-5)* — priorité, SLA restant, canal
-  d'entrée, origine (manuel vs auto-création agent vocal).
-- Fiche Ticket (section 4).
+- ✅ **File de tickets** *(livré en P0-5 — `/tickets`)* — priorité, SLA
+  restant (calculé, pas stocké), canal d'entrée, origine (manuel vs
+  auto-création agent vocal), triée par urgence SLA.
+- ✅ Fiche Ticket *(livré en P0-5 — `/tickets/[id]`)* — échéances SLA, CSAT à
+  la clôture (section 4).
 - **Base de connaissance / FAQ** — back-office du contenu self-service (blog,
-  FAQ, vidéos, guides PDF onboarding QVT).
+  FAQ, vidéos, guides PDF onboarding QVT) — pas construit.
 - **Performance agent vocal** — taux de résolution RVI (cible 80 %), taux
-  d'escalade, temps de traitement (ElevenLabs).
-- **CSAT & verbatims** — notes de clôture, commentaires libres.
+  d'escalade, temps de traitement (ElevenLabs) — pas construit (dashboard #14).
+- **CSAT & verbatims** — le score/commentaire existent sur `Ticket`, pas
+  encore agrégés dans une vue dédiée.
 
 ### Partenaires *(volet financier, distinct du module Comptes Partenaires)*
 > Regroupé avec Wallet & Finance ci-dessous pour éviter la redondance avec le
@@ -221,9 +250,17 @@ même table.
   dormants, 1-2 % frais de gestion QVT, marge par segment.
 
 ### Reporting & Analytics
-- **Centre de dashboards** — accès aux 20 dashboards (section 6).
-- **Rapports personnalisés** — constructeur de rapport + export (CSV/PDF).
-- **Rapports QVT automatisés** — un PDF par entreprise, envoi périodique DRH.
+- ✅ **Score de risque & Churn** *(livré en P0-3 — `/score-de-risque`)* —
+  c'est le dashboard #1 de la section 6 déjà construit : répartition
+  vert/orange/rouge globale + par segment, liste des comptes à risque
+  immédiat.
+- **Centre de dashboards** — accès unifié aux 19 autres dashboards (section
+  6) — pas construit, chaque dashboard futur sera un écran séparé comme
+  `/score-de-risque`.
+- **Rapports personnalisés** — constructeur de rapport + export (CSV/PDF) —
+  pas construit.
+- **Rapports QVT automatisés** — un PDF par entreprise, envoi périodique DRH
+  — pas construit.
 
 ### Administration
 - **Rôles & permissions** — Admin, CSM Entreprises, CSM Partenaires, CS
@@ -235,13 +272,21 @@ même table.
 - **Contenu** — blog, FAQ, charte qualité, avis vérifiés.
 
 ### Paramètres
-- **Score de risque** — pondérations ajustables par segment, sans redéploiement
-  *(cadré en P0-3)*.
-- **Templates de communication** — bibliothèque email/SMS/WhatsApp.
+- ✅ **Score de risque** *(livré en P0-3 — `/parametres/score-de-risque`)* —
+  pondérations ajustables par segment, sans redéploiement. Validation en
+  temps réel (chaque segment doit totaliser 100 %). Pas encore persistées
+  (pas de base de données branchée) — l'écran le signale explicitement.
+- **Templates de communication** — bibliothèque email/SMS/WhatsApp — la liste
+  existe (`/templates`, voir Marketing) ; l'édition depuis Paramètres n'est
+  pas construite.
 - **Intégrations** — ElevenLabs, WhatsApp Business (LAM), N8N, Amplitude,
-  Claude (modération), Wave/Orange Money.
-- **Règles d'automatisation (if/then)** — SLA, escalade, playbooks de crise.
-- **Marchés & devises** — prépare l'extension Côte d'Ivoire / Maroc / Nigeria.
+  Claude (modération), Wave/Orange Money — points d'intégration documentés,
+  aucun écran de configuration construit.
+- **Règles d'automatisation (if/then)** — SLA, escalade, playbooks de crise —
+  modélisées dans le schéma (`Playbook`/`PlaybookEtape`), pas d'écran
+  d'édition dédié (les playbooks de démo sont des données de mock).
+- **Marchés & devises** — prépare l'extension Côte d'Ivoire / Maroc / Nigeria
+  — pas construit.
 
 ---
 
@@ -274,11 +319,18 @@ Record Page / HubSpot Timeline / Intercom Inbox) :
 | **Fiche Utilisateur** | `PassionneProfile` *(P0-1)* | Crédits (achetés/consommés/dormants/offerts), statut abonnement, no-show/annulations | Coachs associés, réservations, historique Score de risque | Créditer/débiter crédits, Réinitialiser mot de passe, Suspendre le compte |
 | **Fiche Coach** | `PartenaireProfile` (type = coach indépendant) | Disciplines, certifications, tarifs, taux de remplissage | Passionnés suivis (`CoachAssociation`), avis reçus | Valider certification, Booster la visibilité |
 | **Fiche Lieu** *(écran réel : "Lieux")* | `PartenaireProfile` (type = salle/studio/espace bien-être) | Adresse, équipements, capacité par créneau, complétude profil | Activités proposées, équipe assignée *(écran réel : "Équipes")*, créneaux | Valider le profil, Gérer la capacité, Ajouter un membre à l'équipe |
-| **Fiche Ticket** | `Ticket` *(à créer en P0-5)* | Canal d'entrée, priorité, SLA restant, origine (manuel / auto agent vocal) | Compte, agent assigné, historique d'escalade | Escalader, Résoudre, Envoyer l'enquête CSAT |
-| **Fiche Contrat** | `Contrat` *(à créer)* | Type (Partenaire/QVT), montant, durée, date de signature/renouvellement | Compte, signataire, avenants | Renouveler, Résilier, Générer un avenant |
+| **Fiche Ticket** | ✅ `Ticket` *(livré en P0-5)* | Canal d'entrée, priorité, SLA restant (calculé), origine (manuel / auto agent vocal), CSAT | Compte, agent assigné | Escalader, Résoudre, Envoyer l'enquête CSAT *(actions non câblées — pas de backend)* |
+| **Fiche Contrat** | `Contrat` *(à créer, P1)* | Type (Partenaire/QVT), montant, durée, date de signature/renouvellement | Compte, signataire, avenants | Renouveler, Résilier, Générer un avenant |
 | **Fiche Opportunité** | `Opportunite` *(à créer, P1 Pipeline)* | Étape, montant, probabilité, date de clôture prévue | Compte, propriétaire (commercial), activités liées | Faire avancer l'étape, Créer une proposition |
-| **Fiche Campagne** | `Campagne` *(à créer, P0-4)* | Canal, segment cible, statut, dates | Templates utilisés, comptes touchés | Lancer, Dupliquer, Voir la performance |
-| **Fiche Commercial** | `UtilisateurCRM` (rôle Sales/BizDev ou CSM) | Portefeuille, quota, taux de conversion | Comptes gérés, opportunités en cours | Réaffecter le portefeuille |
+| **Fiche Campagne** | ✅ `Campagne` *(livré en P0-4)* | Canal, segment/phase cible, statut, template, dates | Template utilisé, comptes touchés (`CampagneEnvoi`) | Lancer, Dupliquer, Voir la performance *(actions non câblées — pas de backend)* |
+| **Fiche Commercial** | `UtilisateurCRM` (rôle Sales/BizDev ou CSM) | Portefeuille, quota, taux de conversion | Comptes gérés, opportunités en cours | Réaffecter le portefeuille — *à réconcilier avec les rôles réels Activation Manager / Account Manager (voir section 0)* |
+
+**Entités techniques additionnelles déjà dans le schéma** (pas des "fiches"
+avec leur propre écran principal, mais du modèle qui alimente les fiches
+ci-dessus) : `Playbook` / `PlaybookEtape` / `PlaybookExecution` /
+`MomentDeVerite` (P0-2, moteur des règles if/then), `PonderationRisqueScore`
+(P0-3, poids du Score de risque), `TemplateCommunication` (P0-4, a son propre
+écran liste `/templates`).
 
 ---
 
@@ -291,6 +343,18 @@ Prospect → Qualification → Onboarding → Actif → Renouvellement / Churn
 Onboarding = kick-off + configuration du profil + création des premières
 activités (cf. Story Map). Le passage à "Actif" déclenche la création du
 `PartenaireProfile` définitif.
+
+> **À remplacer avant le P1** par le parcours réel, plus riche, trouvé dans le
+> Vision Book — le métier de l'**Activation Manager** :
+> ```
+> Découverte (visite terrain) → Diagnostic → Démonstration (live) →
+> Engagement (conditions transparentes) → Onboarding (30 premiers jours,
+> joignable en permanence) → Suivi actif (retour toutes les 2-4 semaines) →
+> Ambassadeur (référencement de nouveaux partenaires)
+> ```
+> Ce cycle est spécifique et documenté (qui fait quoi à chaque étape) — voir
+> `Cuberfit_Access_PRD.docx` section 14 et la mémoire projet
+> `project-cuberfit-vision-ai-strategy`.
 
 ### 5.2 Pipeline Entreprises QVT (signature)
 ```
@@ -371,7 +435,7 @@ Brouillon créé par le partenaire → Modération assistée IA (Claude) → Dé
 | 12 | **SLA & Qualité de service** | Support | Respect des engagements | 1ère réponse <4h, résolution 24-48h, taux de dépassement |
 | 13 | **Amplitude (produit)** | Growth, Data | Usage in-app | Funnels, rétention comportementale, événements clés (sync Amplitude) |
 | 14 | **IA & Automatisation** | Admin, CS | Performance des agents automatisés | Taux de résolution RVI (cible 80 %), taux d'escalade, actions de modération Claude |
-| 15 | **Score de risque & Churn** | CS, CSM | Prévention du churn | Répartition vert/orange/rouge, comptes passés en rouge cette semaine |
+| 15 | ✅ **Score de risque & Churn** *(livré — `/score-de-risque`)* | CS, CSM | Prévention du churn | Répartition vert/orange/rouge, comptes passés en rouge cette semaine |
 | 16 | **Onboarding & Activation** | CS Ops, CSM | Suivi des moments de vérité | 1ère session réussie, 1ère réservation, 1er reporting QVT positif |
 | 17 | **Campagnes & Communication** | Marketing | Performance multicanale | Volume envoyé/livré/lu par canal (email/SMS/WhatsApp) |
 | 18 | **Compliance & KYC/KYB** | Admin, Awa | Conformité | Partenaires en attente de vérification, incidents de conformité, statut Bloom |
@@ -380,24 +444,31 @@ Brouillon créé par le partenaire → Modération assistée IA (Claude) → Dé
 
 ---
 
-## 7. Ce qu'il reste à trancher avant de construire
+## 7. Ce qu'il reste à trancher avant de continuer sur le P1
 
-1. **Charte visuelle** — couleurs primaire/secondaire et typographie
-   confirmées (voir section 0). Il reste seulement l'encre foncée et l'accent
-   orange à confirmer en hex exact si un rendu pixel-perfect est nécessaire.
-2. **Séquencement** — ce blueprint couvre P0 **et** P1/P2 (Pipeline,
-   Finance, Reporting avancé, Administration). Je te propose de garder la
-   règle déjà actée : on continue de **construire module par module** dans
-   l'ordre P0 (on est sur P0-1 validé), ce document sert de **carte
-   d'ensemble** pour que chaque module futur s'inscrive dans la structure
-   finale sans avoir à la redessiner à chaque fois.
-3. **Entités à créer** — `Ticket`, `Contrat`, `Opportunite`, `Campagne` ne sont
-   pas encore dans le schéma Prisma (arriveront avec les modules P0-5, P0-4,
-   et P1 Pipeline respectivement).
+1. ✅ **Charte visuelle** — résolu : couleurs primaire/secondaire et
+   typographie confirmées (voir section 0). Reste seulement l'encre foncée et
+   l'accent orange en hex exact, si un rendu pixel-perfect devient nécessaire.
+2. ✅ **P0 complet livré** — P0-1 à P0-5 sont construits et mergés sur `main`
+   (PRs #1 à #7). Ce document reste la **carte d'ensemble** pour le P1
+   (Pipeline Partenaires, Analytics avancé, NPS & feedback, Administration) —
+   même règle de séquencement module par module à appliquer au P1.
+3. **Entités encore à créer** — `Contrat` et `Opportunite` (P1 Pipeline).
+   `Ticket` et `Campagne` sont livrés (voir section 4).
 4. **Relecture** — vu le bruit OCR des documents sources, une relecture rapide
-   de ta part sur les chiffres/KPIs cités en section 0 serait utile avant que
-   je les considère comme définitifs pour calibrer les dashboards.
-5. **Terminologie alignée sur le produit réel** — "Lieux" et "Équipes"
-   corrigés dans ce document après navigation sur l'environnement de test
-   (2026-07-07). À vérifier si d'autres écrans CRM à venir doivent reprendre
-   du vocabulaire produit existant plutôt qu'un vocabulaire générique CRM.
+   des chiffres/KPIs cités en section 0 reste utile avant de les considérer
+   comme définitifs pour calibrer les 19 dashboards restants.
+5. ✅ **Terminologie alignée sur le produit réel** — résolu : "Lieux" et
+   "Équipes" corrigés dans ce document après navigation sur l'environnement
+   de test (2026-07-07).
+6. **Réconciliation de l'organisation CX** — le Vision Book définit des rôles
+   plus riches que ceux de ce document (Activation Manager côté Partenaires,
+   Account Manager côté Corporate post-signature) — voir section 0 et
+   section 5.1. À trancher avant de construire la Fiche Commercial et le
+   Pipeline P1 : garder les rôles CRM génériques actuels, ou les remplacer
+   par cette organisation réelle ?
+7. **Aucune donnée n'est persistée** — tous les modules livrés (P0-1 à P0-5)
+   tournent sur des données mock en mémoire, pas de base Postgres branchée.
+   C'est le prochain choix structurant avant le P1 : brancher une vraie base
+   maintenant, ou continuer à itérer sur le mock jusqu'à ce que le P1 soit
+   également maquetté.
