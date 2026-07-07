@@ -138,8 +138,9 @@ model UtilisateurCRM {
   actif        Boolean         @default(true)
   dateCreation DateTime        @default(now())
 
-  comptesGeres    Account[]        @relation("CSMAssigne")
-  tachesAssignees EtapeExecution[] @relation("TacheAssignee")
+  comptesGeres          Account[]                @relation("CSMAssigne")
+  tachesAssignees       EtapeExecution[]         @relation("TacheAssignee")
+  ponderationsModifiees PonderationRisqueScore[] @relation("PonderationModifiee")
 
   @@map("utilisateurs_crm")
 }
@@ -465,4 +466,58 @@ model MomentDeVerite {
 
   @@unique([accountId, type])
   @@map("moments_de_verite")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE P0-3 — SCORE DE RISQUE & CHURN
+//
+// Le score par compte reste calculé et historisé via RisqueScoreSnapshot
+// (posé en P0-1, section Vue 360°). Ce que P0-3 ajoute : les pondérations
+// par critère et par segment, éditables par un Admin sans redéploiement —
+// exigence explicite du prompt source, les poids actuels étant "indicatifs,
+// à challenger après la V0". Les seuils (Vert 70-100 / Orange 40-69 /
+// Rouge 0-39) restent fixes : seuls les poids sont configurables ici.
+// ---------------------------------------------------------------------------
+
+/// Un critère pondéré du score, spécifique à un segment (les 3 segments
+/// n'utilisent pas les mêmes critères).
+enum CritereRisqueScore {
+  // Passionnés
+  FREQUENCE_UTILISATION // 35%
+  DERNIERE_ACTIVITE // 25%
+  NPS_SATISFACTION // 20%
+  NO_SHOW_ANNULATIONS // 10%
+
+  // Partenaires
+  RESERVATIONS_VIA_CUBERFIT // 35%
+  TAUX_REMPLISSAGE_MOYEN // 25%
+  SATISFACTION_PARTENAIRE // 20%
+  ACTIVITE_COMPTE // 10%
+
+  // Commun Passionnés & Partenaires
+  TICKETS_OUVERTS // 10%
+
+  // Entreprises QVT
+  PCT_EMPLOYES_ACTIFS_MENSUELS // 30%
+  PCT_EMPLOYES_ACTIVES // 20%
+  TENDANCE_USAGE // 20%
+  BUDGET_CONSOMME // 15%
+  RENOUVELLEMENT_PROBABLE // 15%
+}
+
+/// Pondération éditable d'un critère pour un segment. La somme des poidsPct
+/// pour un même segment doit valoir 100 — vérifié côté application (pas de
+/// contrainte SQL, pour permettre un état transitoire pendant l'édition).
+model PonderationRisqueScore {
+  id       String             @id @default(cuid())
+  segment  Segment
+  critere  CritereRisqueScore
+  poidsPct Int // 0-100
+
+  dateDerniereMaj DateTime        @updatedAt
+  modifieParId    String?
+  modifiePar      UtilisateurCRM? @relation("PonderationModifiee", fields: [modifieParId], references: [id])
+
+  @@unique([segment, critere])
+  @@map("ponderations_risque_score")
 }
