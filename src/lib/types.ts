@@ -11,6 +11,12 @@ import type {
   StatutPlaybookExecution,
   TypeActionEtape,
   CanalCommunication,
+  StatutCampagne,
+  StatutEnvoiCampagne,
+  CanalEntreeTicket,
+  PrioriteTicket,
+  StatutTicket,
+  OrigineTicket,
 } from "@/generated/prisma/enums";
 
 export type ContactVM = {
@@ -94,6 +100,7 @@ export type EtapeExecutionVM = {
   dateEcheance: string;
   dateRealisation?: string;
   assigneA?: string;
+  templateNom?: string;
 };
 
 export type PlaybookExecutionVM = {
@@ -122,4 +129,67 @@ export type AccountVM = {
   passionneProfile?: PassionneProfileVM;
   partenaireProfile?: PartenaireProfileVM;
   entrepriseQvtProfile?: EntrepriseQvtProfileVM;
+};
+
+// ---------------------------------------------------------------------------
+// Module P0-4 — Communication multicanale
+// ---------------------------------------------------------------------------
+
+export type TemplateVM = {
+  id: string;
+  nom: string;
+  canal: CanalCommunication;
+  segment?: Segment;
+  phase?: PhaseLifecycle;
+  sujet?: string;
+  corps: string;
+  actif: boolean;
+};
+
+export type CampagneEnvoiVM = {
+  id: string;
+  accountId: string;
+  accountNom: string;
+  statut: StatutEnvoiCampagne;
+  dateEnvoi?: string;
+  dateLecture?: string;
+};
+
+export type CampagneVM = {
+  id: string;
+  nom: string;
+  description?: string;
+  segmentCible?: Segment;
+  phaseCible?: PhaseLifecycle;
+  canal: CanalCommunication;
+  templateId: string;
+  templateNom: string;
+  statut: StatutCampagne;
+  datePlanifiee?: string;
+  dateEnvoi?: string;
+  dateCreation: string;
+  envois: CampagneEnvoiVM[];
+};
+
+// ---------------------------------------------------------------------------
+// Module P0-5 — Tickets & support
+// ---------------------------------------------------------------------------
+
+export type TicketVM = {
+  id: string;
+  numero: number;
+  accountId: string;
+  accountNom: string;
+  sujet: string;
+  description?: string;
+  canalEntree: CanalEntreeTicket;
+  priorite: PrioriteTicket;
+  statut: StatutTicket;
+  origine: OrigineTicket;
+  assigneA?: string;
+  dateCreation: string;
+  datePremiereReponse?: string;
+  dateResolution?: string;
+  csatScore?: number;
+  csatCommentaire?: string;
 };
