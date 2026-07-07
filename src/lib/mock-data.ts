@@ -57,8 +57,8 @@ export const mockAccounts: AccountVM[] = [
         dateDeclenchement: "2026-02-10",
         etapes: [
           { id: "ee_1", ordre: 1, titre: "Tutoriel de bienvenue", typeAction: "NOTIFICATION_INTERNE", canal: "AUCUN", statut: "FAITE", dateEcheance: "2026-02-10", dateRealisation: "2026-02-10" },
-          { id: "ee_2", ordre: 2, titre: "Relance J+3", typeAction: "RELANCE_AUTO", canal: "EMAIL", statut: "FAITE", dateEcheance: "2026-02-13", dateRealisation: "2026-02-13" },
-          { id: "ee_3", ordre: 3, titre: "Relance J+7", typeAction: "RELANCE_AUTO", canal: "WHATSAPP", statut: "FAITE", dateEcheance: "2026-02-17", dateRealisation: "2026-02-17" },
+          { id: "ee_2", ordre: 2, titre: "Relance J+3", typeAction: "RELANCE_AUTO", canal: "EMAIL", statut: "FAITE", dateEcheance: "2026-02-13", dateRealisation: "2026-02-13", templateNom: "Bienvenue — Onboarding Passionné" },
+          { id: "ee_3", ordre: 3, titre: "Relance J+7", typeAction: "RELANCE_AUTO", canal: "WHATSAPP", statut: "FAITE", dateEcheance: "2026-02-17", dateRealisation: "2026-02-17", templateNom: "Relance J+7 — Onboarding Passionné" },
         ],
       },
     ],
@@ -153,7 +153,7 @@ export const mockAccounts: AccountVM[] = [
         statut: "EN_COURS",
         dateDeclenchement: "2026-07-02",
         etapes: [
-          { id: "ee_6", ordre: 1, titre: "Relance automatique inactivité (>14j)", typeAction: "RELANCE_AUTO", canal: "WHATSAPP", statut: "A_FAIRE", dateEcheance: "2026-07-07" },
+          { id: "ee_6", ordre: 1, titre: "Relance automatique inactivité (>14j)", typeAction: "RELANCE_AUTO", canal: "WHATSAPP", statut: "A_FAIRE", dateEcheance: "2026-07-07", templateNom: "Relance inactivité — Client silencieux" },
         ],
       },
     ],

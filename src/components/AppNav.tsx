@@ -3,6 +3,10 @@ import Link from "next/link";
 const LINKS = [
   { href: "/comptes", label: "Comptes" },
   { href: "/lifecycle", label: "Onboarding & lifecycle" },
+  { href: "/score-de-risque", label: "Score de risque" },
+  { href: "/campagnes", label: "Campagnes" },
+  { href: "/tickets", label: "Tickets" },
+  { href: "/parametres/score-de-risque", label: "Paramètres" },
 ];
 
 export function AppNav() {

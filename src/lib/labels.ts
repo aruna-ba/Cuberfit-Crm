@@ -11,6 +11,13 @@ import type {
   StatutPlaybookExecution,
   TypeActionEtape,
   CanalCommunication,
+  CritereRisqueScore,
+  StatutCampagne,
+  StatutEnvoiCampagne,
+  CanalEntreeTicket,
+  PrioriteTicket,
+  StatutTicket,
+  OrigineTicket,
 } from "@/generated/prisma/enums";
 
 export const segmentLabel: Record<Segment, string> = {
@@ -127,3 +134,107 @@ export const canalCommunicationLabel: Record<CanalCommunication, string> = {
   APPEL: "Appel",
   AUCUN: "—",
 };
+
+// ---------------------------------------------------------------------------
+// Module P0-3 — Score de risque & churn
+// ---------------------------------------------------------------------------
+
+export const critereRisqueScoreLabel: Record<CritereRisqueScore, string> = {
+  FREQUENCE_UTILISATION: "Fréquence d'utilisation",
+  DERNIERE_ACTIVITE: "Dernière activité / récence",
+  NPS_SATISFACTION: "NPS / satisfaction",
+  NO_SHOW_ANNULATIONS: "No-show & annulations",
+  RESERVATIONS_VIA_CUBERFIT: "Réservations via Cuberfit",
+  TAUX_REMPLISSAGE_MOYEN: "Taux de remplissage moyen",
+  SATISFACTION_PARTENAIRE: "Satisfaction partenaire",
+  ACTIVITE_COMPTE: "Activité du compte",
+  TICKETS_OUVERTS: "Tickets ouverts",
+  PCT_EMPLOYES_ACTIFS_MENSUELS: "% employés actifs mensuels",
+  PCT_EMPLOYES_ACTIVES: "% employés activés",
+  TENDANCE_USAGE: "Tendance d'usage",
+  BUDGET_CONSOMME: "Budget consommé",
+  RENOUVELLEMENT_PROBABLE: "Renouvellement probable",
+};
+
+// ---------------------------------------------------------------------------
+// Module P0-4 — Communication multicanale
+// ---------------------------------------------------------------------------
+
+export const statutCampagneLabel: Record<StatutCampagne, string> = {
+  BROUILLON: "Brouillon",
+  PLANIFIEE: "Planifiée",
+  ENVOYEE: "Envoyée",
+  TERMINEE: "Terminée",
+  ANNULEE: "Annulée",
+};
+
+export const statutCampagneBadgeClass: Record<StatutCampagne, string> = {
+  BROUILLON: "bg-slate-100 text-slate-600 ring-slate-600/20",
+  PLANIFIEE: "bg-sky-100 text-sky-800 ring-sky-600/20",
+  ENVOYEE: "bg-violet-100 text-violet-800 ring-violet-600/20",
+  TERMINEE: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
+  ANNULEE: "bg-red-100 text-red-800 ring-red-600/20",
+};
+
+export const statutEnvoiCampagneLabel: Record<StatutEnvoiCampagne, string> = {
+  EN_ATTENTE: "En attente",
+  ENVOYE: "Envoyé",
+  LIVRE: "Livré",
+  LU: "Lu",
+  CLIQUE: "Cliqué",
+  ECHEC: "Échec",
+};
+
+// ---------------------------------------------------------------------------
+// Module P0-5 — Tickets & support
+// ---------------------------------------------------------------------------
+
+export const canalEntreeTicketLabel: Record<CanalEntreeTicket, string> = {
+  APP_MOBILE: "App mobile",
+  WHATSAPP: "WhatsApp",
+  EMAIL: "Email",
+  AGENT_VOCAL: "Agent vocal (RVI)",
+  APPEL_TELEPHONIQUE: "Appel téléphonique",
+};
+
+export const prioriteTicketLabel: Record<PrioriteTicket, string> = {
+  URGENTE: "Urgente",
+  HAUTE: "Haute",
+  MOYENNE: "Moyenne",
+  BASSE: "Basse",
+};
+
+export const prioriteTicketBadgeClass: Record<PrioriteTicket, string> = {
+  URGENTE: "bg-red-100 text-red-800 ring-red-600/20",
+  HAUTE: "bg-amber-100 text-amber-800 ring-amber-600/20",
+  MOYENNE: "bg-sky-100 text-sky-800 ring-sky-600/20",
+  BASSE: "bg-slate-100 text-slate-600 ring-slate-600/20",
+};
+
+export const statutTicketLabel: Record<StatutTicket, string> = {
+  OUVERT: "Ouvert",
+  EN_COURS: "En cours",
+  EN_ATTENTE_CLIENT: "En attente client",
+  RESOLU: "Résolu",
+  FERME: "Fermé",
+};
+
+export const statutTicketBadgeClass: Record<StatutTicket, string> = {
+  OUVERT: "bg-sky-100 text-sky-800 ring-sky-600/20",
+  EN_COURS: "bg-violet-100 text-violet-800 ring-violet-600/20",
+  EN_ATTENTE_CLIENT: "bg-amber-100 text-amber-800 ring-amber-600/20",
+  RESOLU: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
+  FERME: "bg-slate-100 text-slate-500 ring-slate-600/20",
+};
+
+export const origineTicketLabel: Record<OrigineTicket, string> = {
+  MANUEL: "Manuel",
+  AUTO_AGENT_VOCAL: "Auto — agent vocal",
+};
+
+/// SLA cibles actés — utilisés pour calculer l'échéance depuis dateCreation.
+export const SLA_TICKET = {
+  PREMIERE_REPONSE_HEURES: 4,
+  RESOLUTION_HEURES_MIN: 24,
+  RESOLUTION_HEURES_MAX: 48,
+} as const;

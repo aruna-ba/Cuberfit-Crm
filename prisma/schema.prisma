@@ -138,8 +138,10 @@ model UtilisateurCRM {
   actif        Boolean         @default(true)
   dateCreation DateTime        @default(now())
 
-  comptesGeres    Account[]        @relation("CSMAssigne")
-  tachesAssignees EtapeExecution[] @relation("TacheAssignee")
+  comptesGeres          Account[]                @relation("CSMAssigne")
+  tachesAssignees       EtapeExecution[]         @relation("TacheAssignee")
+  ponderationsModifiees PonderationRisqueScore[] @relation("PonderationModifiee")
+  ticketsAssignes       Ticket[]                 @relation("TicketAssigne")
 
   @@map("utilisateurs_crm")
 }
@@ -183,6 +185,12 @@ model Account {
   // Module P0-2 : Onboarding & lifecycle
   playbookExecutions PlaybookExecution[]
   momentsDeVerite    MomentDeVerite[]
+
+  // Module P0-4 : Communication multicanale
+  campagneEnvois CampagneEnvoi[]
+
+  // Module P0-5 : Tickets & support
+  tickets Ticket[]
 
   @@index([segment])
   @@index([phaseLifecycle])
@@ -403,6 +411,11 @@ model PlaybookEtape {
   typeAction  TypeActionEtape
   canal       CanalCommunication @default(AUCUN)
 
+  // Renseigné pour les étapes typeAction = RELANCE_AUTO : quel template
+  // (module P0-4) cette relance automatique envoie.
+  templateId String?
+  template   TemplateCommunication? @relation(fields: [templateId], references: [id])
+
   executions EtapeExecution[]
 
   @@unique([playbookId, ordre])
@@ -465,4 +478,221 @@ model MomentDeVerite {
 
   @@unique([accountId, type])
   @@map("moments_de_verite")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE P0-3 — SCORE DE RISQUE & CHURN
+//
+// Le score par compte reste calculé et historisé via RisqueScoreSnapshot
+// (posé en P0-1, section Vue 360°). Ce que P0-3 ajoute : les pondérations
+// par critère et par segment, éditables par un Admin sans redéploiement —
+// exigence explicite du prompt source, les poids actuels étant "indicatifs,
+// à challenger après la V0". Les seuils (Vert 70-100 / Orange 40-69 /
+// Rouge 0-39) restent fixes : seuls les poids sont configurables ici.
+// ---------------------------------------------------------------------------
+
+/// Un critère pondéré du score, spécifique à un segment (les 3 segments
+/// n'utilisent pas les mêmes critères).
+enum CritereRisqueScore {
+  // Passionnés
+  FREQUENCE_UTILISATION // 35%
+  DERNIERE_ACTIVITE // 25%
+  NPS_SATISFACTION // 20%
+  NO_SHOW_ANNULATIONS // 10%
+
+  // Partenaires
+  RESERVATIONS_VIA_CUBERFIT // 35%
+  TAUX_REMPLISSAGE_MOYEN // 25%
+  SATISFACTION_PARTENAIRE // 20%
+  ACTIVITE_COMPTE // 10%
+
+  // Commun Passionnés & Partenaires
+  TICKETS_OUVERTS // 10%
+
+  // Entreprises QVT
+  PCT_EMPLOYES_ACTIFS_MENSUELS // 30%
+  PCT_EMPLOYES_ACTIVES // 20%
+  TENDANCE_USAGE // 20%
+  BUDGET_CONSOMME // 15%
+  RENOUVELLEMENT_PROBABLE // 15%
+}
+
+/// Pondération éditable d'un critère pour un segment. La somme des poidsPct
+/// pour un même segment doit valoir 100 — vérifié côté application (pas de
+/// contrainte SQL, pour permettre un état transitoire pendant l'édition).
+model PonderationRisqueScore {
+  id       String             @id @default(cuid())
+  segment  Segment
+  critere  CritereRisqueScore
+  poidsPct Int // 0-100
+
+  dateDerniereMaj DateTime        @updatedAt
+  modifieParId    String?
+  modifiePar      UtilisateurCRM? @relation("PonderationModifiee", fields: [modifieParId], references: [id])
+
+  @@unique([segment, critere])
+  @@map("ponderations_risque_score")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE P0-4 — COMMUNICATION MULTICANALE
+//
+// Templates par segment/phase de lifecycle (réutilisés par les playbooks
+// P0-2 pour les relances automatiques) + campagnes ponctuelles avec suivi
+// d'envoi par canal. La connexion N8N pour l'automatisation d'envoi est un
+// point d'intégration documenté (voir Paramètres → Intégrations dans le
+// blueprint produit), pas implémentée ici : ce module pose le modèle de
+// données que N8N viendra consommer/alimenter.
+// ---------------------------------------------------------------------------
+
+enum StatutCampagne {
+  BROUILLON
+  PLANIFIEE
+  ENVOYEE
+  TERMINEE
+  ANNULEE
+}
+
+enum StatutEnvoiCampagne {
+  EN_ATTENTE
+  ENVOYE
+  LIVRE
+  LU
+  CLIQUE
+  ECHEC
+}
+
+/// Modèle de message réutilisable, propre à un segment et/ou une phase de
+/// lifecycle (onboarding/adoption/expansion/crise). Sert à la fois aux
+/// campagnes ponctuelles et aux relances automatiques des playbooks P0-2.
+model TemplateCommunication {
+  id      String             @id @default(cuid())
+  nom     String
+  canal   CanalCommunication
+  segment Segment? // null = tous segments
+  phase   PhaseLifecycle? // null = hors lifecycle (ex: crise, ponctuel)
+
+  sujet String? // pertinent pour EMAIL uniquement
+  corps String // contenu du message, variables type {{prenom}}
+
+  actif        Boolean  @default(true)
+  dateCreation DateTime @default(now())
+
+  campagnes      Campagne[]
+  etapesPlaybook PlaybookEtape[]
+
+  @@index([segment, phase])
+  @@map("templates_communication")
+}
+
+/// Campagne ponctuelle envoyée à un segment (ou à tous), via un template et
+/// un canal donnés.
+model Campagne {
+  id          String  @id @default(cuid())
+  nom         String
+  description String?
+
+  segmentCible Segment? // null = tous segments
+  phaseCible   PhaseLifecycle? // null = pas de ciblage par phase
+  canal        CanalCommunication
+
+  templateId String
+  template   TemplateCommunication @relation(fields: [templateId], references: [id])
+
+  statut        StatutCampagne @default(BROUILLON)
+  datePlanifiee DateTime?
+  dateEnvoi     DateTime?
+  dateCreation  DateTime       @default(now())
+
+  envois CampagneEnvoi[]
+
+  @@map("campagnes")
+}
+
+/// Trace d'envoi d'une campagne à un compte précis — alimente le dashboard
+/// "Performance par canal".
+model CampagneEnvoi {
+  id         String   @id @default(cuid())
+  campagneId String
+  campagne   Campagne @relation(fields: [campagneId], references: [id], onDelete: Cascade)
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  statut      StatutEnvoiCampagne @default(EN_ATTENTE)
+  dateEnvoi   DateTime?
+  dateLecture DateTime?
+
+  @@unique([campagneId, accountId])
+  @@map("campagne_envois")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE P0-5 — TICKETS & SUPPORT (façon "Service Cloud / Cases")
+//
+// SLA cibles actés : 1ère réponse < 4h ouvrées, résolution standard 24-48h
+// (hors incidents majeurs), ≈80% des demandes routine traitées par l'agent
+// vocal RVI — les 20% résiduels génèrent automatiquement un ticket
+// (origine = AUTO_AGENT_VOCAL). CSAT recueilli à la clôture.
+// ---------------------------------------------------------------------------
+
+enum CanalEntreeTicket {
+  APP_MOBILE
+  WHATSAPP
+  EMAIL
+  AGENT_VOCAL
+  APPEL_TELEPHONIQUE
+}
+
+/// Priorités métier Cuberfit, en complément des SLA génériques.
+enum PrioriteTicket {
+  URGENTE // ex: paiement débité sans crédit, donnée de santé Bloom compromise — hors SLA standard, traitement immédiat
+  HAUTE // ex: réservation annulée sans remboursement, litige coach/partenaire — dans le SLA 4h/24-48h
+  MOYENNE // ex: question crédits dormants, modification profil — SLA standard
+  BASSE // ex: question générale, suggestion produit — self-service en priorité
+}
+
+enum StatutTicket {
+  OUVERT
+  EN_COURS
+  EN_ATTENTE_CLIENT
+  RESOLU
+  FERME
+}
+
+/// Distingue les tickets créés manuellement de ceux créés automatiquement
+/// par l'agent vocal (escalade des ~20% de demandes non résolues par le RVI).
+enum OrigineTicket {
+  MANUEL
+  AUTO_AGENT_VOCAL
+}
+
+model Ticket {
+  id     String @id @default(cuid())
+  numero Int    @default(autoincrement())
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  sujet       String
+  description String?
+  canalEntree CanalEntreeTicket
+  priorite    PrioriteTicket
+  statut      StatutTicket      @default(OUVERT)
+  origine     OrigineTicket     @default(MANUEL)
+
+  assigneAId String?
+  assigneA   UtilisateurCRM? @relation("TicketAssigne", fields: [assigneAId], references: [id])
+
+  dateCreation        DateTime  @default(now())
+  datePremiereReponse DateTime?
+  dateResolution      DateTime?
+
+  // CSAT recueilli à la clôture du ticket (échelle 1-5).
+  csatScore       Int?
+  csatCommentaire String?
+
+  @@index([accountId, statut])
+  @@index([priorite, statut])
+  @@map("tickets")
 }
