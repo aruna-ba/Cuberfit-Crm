@@ -185,6 +185,9 @@ model Account {
   playbookExecutions PlaybookExecution[]
   momentsDeVerite    MomentDeVerite[]
 
+  // Module P0-4 : Communication multicanale
+  campagneEnvois CampagneEnvoi[]
+
   @@index([segment])
   @@index([phaseLifecycle])
   @@index([risqueScoreStatut])
@@ -404,6 +407,11 @@ model PlaybookEtape {
   typeAction  TypeActionEtape
   canal       CanalCommunication @default(AUCUN)
 
+  // Renseigné pour les étapes typeAction = RELANCE_AUTO : quel template
+  // (module P0-4) cette relance automatique envoie.
+  templateId String?
+  template   TemplateCommunication? @relation(fields: [templateId], references: [id])
+
   executions EtapeExecution[]
 
   @@unique([playbookId, ordre])
@@ -520,4 +528,97 @@ model PonderationRisqueScore {
 
   @@unique([segment, critere])
   @@map("ponderations_risque_score")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE P0-4 — COMMUNICATION MULTICANALE
+//
+// Templates par segment/phase de lifecycle (réutilisés par les playbooks
+// P0-2 pour les relances automatiques) + campagnes ponctuelles avec suivi
+// d'envoi par canal. La connexion N8N pour l'automatisation d'envoi est un
+// point d'intégration documenté (voir Paramètres → Intégrations dans le
+// blueprint produit), pas implémentée ici : ce module pose le modèle de
+// données que N8N viendra consommer/alimenter.
+// ---------------------------------------------------------------------------
+
+enum StatutCampagne {
+  BROUILLON
+  PLANIFIEE
+  ENVOYEE
+  TERMINEE
+  ANNULEE
+}
+
+enum StatutEnvoiCampagne {
+  EN_ATTENTE
+  ENVOYE
+  LIVRE
+  LU
+  CLIQUE
+  ECHEC
+}
+
+/// Modèle de message réutilisable, propre à un segment et/ou une phase de
+/// lifecycle (onboarding/adoption/expansion/crise). Sert à la fois aux
+/// campagnes ponctuelles et aux relances automatiques des playbooks P0-2.
+model TemplateCommunication {
+  id      String             @id @default(cuid())
+  nom     String
+  canal   CanalCommunication
+  segment Segment? // null = tous segments
+  phase   PhaseLifecycle? // null = hors lifecycle (ex: crise, ponctuel)
+
+  sujet String? // pertinent pour EMAIL uniquement
+  corps String // contenu du message, variables type {{prenom}}
+
+  actif        Boolean  @default(true)
+  dateCreation DateTime @default(now())
+
+  campagnes      Campagne[]
+  etapesPlaybook PlaybookEtape[]
+
+  @@index([segment, phase])
+  @@map("templates_communication")
+}
+
+/// Campagne ponctuelle envoyée à un segment (ou à tous), via un template et
+/// un canal donnés.
+model Campagne {
+  id          String  @id @default(cuid())
+  nom         String
+  description String?
+
+  segmentCible Segment? // null = tous segments
+  phaseCible   PhaseLifecycle? // null = pas de ciblage par phase
+  canal        CanalCommunication
+
+  templateId String
+  template   TemplateCommunication @relation(fields: [templateId], references: [id])
+
+  statut        StatutCampagne @default(BROUILLON)
+  datePlanifiee DateTime?
+  dateEnvoi     DateTime?
+  dateCreation  DateTime       @default(now())
+
+  envois CampagneEnvoi[]
+
+  @@map("campagnes")
+}
+
+/// Trace d'envoi d'une campagne à un compte précis — alimente le dashboard
+/// "Performance par canal".
+model CampagneEnvoi {
+  id         String   @id @default(cuid())
+  campagneId String
+  campagne   Campagne @relation(fields: [campagneId], references: [id], onDelete: Cascade)
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  statut      StatutEnvoiCampagne @default(EN_ATTENTE)
+  dateEnvoi   DateTime?
+  dateLecture DateTime?
+
+  @@unique([campagneId, accountId])
+  @@map("campagne_envois")
 }

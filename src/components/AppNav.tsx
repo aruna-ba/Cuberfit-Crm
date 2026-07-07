@@ -4,6 +4,7 @@ const LINKS = [
   { href: "/comptes", label: "Comptes" },
   { href: "/lifecycle", label: "Onboarding & lifecycle" },
   { href: "/score-de-risque", label: "Score de risque" },
+  { href: "/campagnes", label: "Campagnes" },
   { href: "/parametres/score-de-risque", label: "Paramètres" },
 ];
 

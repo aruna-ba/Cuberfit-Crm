@@ -273,6 +273,7 @@ export default async function CompteDetailPage({
                                 ? ` le ${formatDate(etape.dateRealisation)}`
                                 : ` (échéance ${formatDate(etape.dateEcheance)})`}
                               {etape.assigneA ? ` · ${etape.assigneA}` : ""}
+                              {etape.templateNom ? ` · template « ${etape.templateNom} »` : ""}
                             </span>
                           </span>
                         </li>

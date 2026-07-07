@@ -1,9 +1,11 @@
-import type { StatutRisqueScore, NiveauAccompagnement } from "@/generated/prisma/enums";
+import type { StatutRisqueScore, NiveauAccompagnement, StatutCampagne } from "@/generated/prisma/enums";
 import {
   risqueScoreBadgeClass,
   niveauAccompagnementBadgeClass,
   niveauAccompagnementLabel,
   statutRisqueScoreLabel,
+  statutCampagneBadgeClass,
+  statutCampagneLabel,
 } from "@/lib/labels";
 
 export function RisqueScoreBadge({
@@ -36,6 +38,16 @@ export function AccompagnementBadge({ niveau }: { niveau: NiveauAccompagnement }
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${niveauAccompagnementBadgeClass[niveau]}`}
     >
       {niveauAccompagnementLabel[niveau]}
+    </span>
+  );
+}
+
+export function CampagneStatutBadge({ statut }: { statut: StatutCampagne }) {
+  return (
+    <span
+      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${statutCampagneBadgeClass[statut]}`}
+    >
+      {statutCampagneLabel[statut]}
     </span>
   );
 }

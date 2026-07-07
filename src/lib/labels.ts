@@ -12,6 +12,8 @@ import type {
   TypeActionEtape,
   CanalCommunication,
   CritereRisqueScore,
+  StatutCampagne,
+  StatutEnvoiCampagne,
 } from "@/generated/prisma/enums";
 
 export const segmentLabel: Record<Segment, string> = {
@@ -148,4 +150,33 @@ export const critereRisqueScoreLabel: Record<CritereRisqueScore, string> = {
   TENDANCE_USAGE: "Tendance d'usage",
   BUDGET_CONSOMME: "Budget consommé",
   RENOUVELLEMENT_PROBABLE: "Renouvellement probable",
+};
+
+// ---------------------------------------------------------------------------
+// Module P0-4 — Communication multicanale
+// ---------------------------------------------------------------------------
+
+export const statutCampagneLabel: Record<StatutCampagne, string> = {
+  BROUILLON: "Brouillon",
+  PLANIFIEE: "Planifiée",
+  ENVOYEE: "Envoyée",
+  TERMINEE: "Terminée",
+  ANNULEE: "Annulée",
+};
+
+export const statutCampagneBadgeClass: Record<StatutCampagne, string> = {
+  BROUILLON: "bg-slate-100 text-slate-600 ring-slate-600/20",
+  PLANIFIEE: "bg-sky-100 text-sky-800 ring-sky-600/20",
+  ENVOYEE: "bg-violet-100 text-violet-800 ring-violet-600/20",
+  TERMINEE: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
+  ANNULEE: "bg-red-100 text-red-800 ring-red-600/20",
+};
+
+export const statutEnvoiCampagneLabel: Record<StatutEnvoiCampagne, string> = {
+  EN_ATTENTE: "En attente",
+  ENVOYE: "Envoyé",
+  LIVRE: "Livré",
+  LU: "Lu",
+  CLIQUE: "Cliqué",
+  ECHEC: "Échec",
 };
