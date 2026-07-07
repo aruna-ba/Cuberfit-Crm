@@ -19,15 +19,47 @@ fournis le 2026-07-03 (`Vision et cadrage produit`, `Mapping fonctionnel`,
   certains éléments (chiffres, libellés exacts) méritent une relecture rapide
   de ta part avant diffusion à l'équipe.
 - Le fichier `CUBERFIT.fig` est un binaire propriétaire que je ne peux pas
-  ouvrir : **aucun code couleur ni token de design n'a pu être récupéré**. La
-  charte visuelle ci-dessous n'existe donc pas encore — ce blueprint est
-  volontairement neutre en design (structure et contenu, pas de palette). Si
-  tu peux m'envoyer les couleurs/typo (texte suffit, pas besoin du fichier), je
-  les intègre partout.
+  ouvrir directement — la charte ci-dessous vient de captures d'écran du
+  design system fournies le 2026-07-06 (voir sous-section suivante), pas
+  d'une lecture du fichier lui-même.
 - Point de validation croisée intéressant trouvé dans le Mapping technique :
   Cuberfit note déjà *"Arbitrage à faire sur le CRM à utiliser"* et utilise
   Notion comme pis-aller — ce projet CRM est donc bien la réponse officielle à
   un besoin déjà identifié en interne, pas une initiative parallèle.
+
+**Charte visuelle (Cuberfit Access) :**
+- Couleur primaire `#3333CE` (RGB 51,51,206, ~50% des surfaces colorées),
+  secondaire `#5E97E0` (RGB 94,151,224, ~30%).
+- Palette alternative "Cuberfit Pro" : `#583499` / `#B0A3F2` — disponible si
+  un module doit se distinguer visuellement, non utilisée par défaut.
+- Typographie : une seule famille, **Poppins**, du Bold 50px (titres
+  principaux) au Regular 14px (sous-titres/description), voir le detail dans
+  le document Word associé.
+- Encre/texte foncé et accent orange (aperçus sur les écrans logo) : valeurs
+  exactes non fournies, estimées visuellement — à confirmer si besoin de
+  précision pixel-perfect.
+
+**Validé directement sur l'environnement de test (`test.dev.cuberfit.com`,
+2026-07-07, navigation en lecture sur les comptes Passionné et Partenaire) :**
+- Le système de crédits est actif et réel : paiement via **Wave**, pack 5
+  crédits = 5 000 XOF, pack 20 crédits = 20 000 XOF, avec historique de
+  transactions (achats, inscriptions séance, remboursements d'annulation).
+- Le catalogue d'activités est déjà riche (~17 pages : RPM, Body Combat, Body
+  Pump, Step, Body Attack, Hijama humide...), avec coach, durée, niveau, prix
+  en crédits par séance.
+- Un **programme de fidélité par niveaux est déjà en production** côté
+  Passionné (Initié → Débutant → …), alors que la Priorisation Post-MVP le
+  classait "post-MVP, impact élevé" — ce document de priorisation a donc déjà
+  un peu de retard sur le produit réel, à garder en tête pour les prochains
+  arbitrages.
+- Le support Partenaire actuel est un simple lien vers un chat WhatsApp
+  ("Assistance"), sans système de ticketing — confirme bien le besoin du
+  module P0-5.
+- **Terminologie produit réelle à reprendre dans ce document** (corrigée
+  ci-dessous) : l'espace Partenaire utilise **"Lieux"** pour la gestion des
+  emplacements (pas "Salle") et **"Équipes"** pour la gestion des membres —
+  navigation réelle observée : Tableau de bord, Lieux, Activités, Calendrier,
+  Finances, Équipes, Assistance, Mes paramètres.
 
 **Faits structurants extraits de ces documents (repris tels quels dans les
 choix ci-dessous) :**
@@ -113,17 +145,26 @@ même table.
 - **Import/export** — CSV pour opérations ponctuelles (ex. migration Notion).
 
 ### Partenaires (comptes B2B2C)
+> Reprend la navigation réelle observée côté espace Partenaire (Tableau de
+> bord, Lieux, Activités, Calendrier, Finances, Équipes, Assistance), plus les
+> vues spécifiquement CRM/admin qui n'existent pas côté partenaire.
 - Liste des partenaires, filtrable par type (Salle / Studio / Coach
   indépendant / Espace bien-être), niveau d'accompagnement, statut de
   validation.
 - Fiche Partenaire 360°, avec sous-fiches spécialisées **Fiche Coach** et
-  **Fiche Salle** (voir section 4).
+  **Fiche Lieu** (voir section 4 — correspond à l'écran "Lieux" côté
+  partenaire : un partenaire peut gérer plusieurs emplacements).
 - **Carte des partenaires** — vue géolocalisée (Dakar : Plateau, Almadies,
   Ngor, Mermoz, Sacré-Cœur, Point E, Ouakam, Yoff), miroir admin de
   l'exploration par quartier côté app Passionné.
 - **File de validation** — activités et profils partenaires en attente de
   modération (assistée par Claude, décision humaine finale).
 - **Demandes d'onboarding** — nouveaux partenaires en cours de qualification.
+- **Équipes** (vue admin en lecture) — miroir de l'écran "Équipes" côté
+  partenaire, pour que les CSM Partenaires voient qui gère chaque compte.
+- **Finances partenaire** (vue admin en lecture) — miroir de l'écran
+  "Finances"/retraits côté partenaire ; le détail transactionnel vit dans le
+  module Wallet & Finance (voir plus bas).
 
 ### Entreprises QVT (comptes B2B)
 - Liste des entreprises QVT, filtrable par secteur, taille, niveau
@@ -170,7 +211,8 @@ même table.
 ### Wallet & Finance
 - **Vue crédits globale** — achetés / consommés / dormants, par segment,
   avec suivi du double-crédit (B2C, Corporate, offert — expiration 1 mois,
-  non transférable).
+  non transférable). Pricing confirmé en test : pack 5 crédits = 5 000 XOF,
+  pack 20 crédits = 20 000 XOF.
 - **Transactions & paiements** — Wave, Orange Money, carte bancaire ; suivi
   des erreurs de paiement.
 - **Retraits partenaires** — demandes, statut KYC/KYB, exécution.
@@ -231,7 +273,7 @@ Record Page / HubSpot Timeline / Intercom Inbox) :
 | **Fiche Contact** | `Contact` *(P0-1)* | Rôle (interlocuteur RH, gérant...), contact principal | Compte parent, emails/appels échangés | Définir comme contact principal, Envoyer email |
 | **Fiche Utilisateur** | `PassionneProfile` *(P0-1)* | Crédits (achetés/consommés/dormants/offerts), statut abonnement, no-show/annulations | Coachs associés, réservations, historique Score de risque | Créditer/débiter crédits, Réinitialiser mot de passe, Suspendre le compte |
 | **Fiche Coach** | `PartenaireProfile` (type = coach indépendant) | Disciplines, certifications, tarifs, taux de remplissage | Passionnés suivis (`CoachAssociation`), avis reçus | Valider certification, Booster la visibilité |
-| **Fiche Salle** | `PartenaireProfile` (type = salle/studio/espace bien-être) | Adresse, équipements, capacité par créneau, complétude profil | Activités proposées, membres de l'équipe, créneaux | Valider le profil, Gérer la capacité, Ajouter un membre |
+| **Fiche Lieu** *(écran réel : "Lieux")* | `PartenaireProfile` (type = salle/studio/espace bien-être) | Adresse, équipements, capacité par créneau, complétude profil | Activités proposées, équipe assignée *(écran réel : "Équipes")*, créneaux | Valider le profil, Gérer la capacité, Ajouter un membre à l'équipe |
 | **Fiche Ticket** | `Ticket` *(à créer en P0-5)* | Canal d'entrée, priorité, SLA restant, origine (manuel / auto agent vocal) | Compte, agent assigné, historique d'escalade | Escalader, Résoudre, Envoyer l'enquête CSAT |
 | **Fiche Contrat** | `Contrat` *(à créer)* | Type (Partenaire/QVT), montant, durée, date de signature/renouvellement | Compte, signataire, avenants | Renouveler, Résilier, Générer un avenant |
 | **Fiche Opportunité** | `Opportunite` *(à créer, P1 Pipeline)* | Étape, montant, probabilité, date de clôture prévue | Compte, propriétaire (commercial), activités liées | Faire avancer l'étape, Créer une proposition |
@@ -340,9 +382,9 @@ Brouillon créé par le partenaire → Modération assistée IA (Claude) → Dé
 
 ## 7. Ce qu'il reste à trancher avant de construire
 
-1. **Charte visuelle** — aucune couleur/typo récupérable du fichier Figma
-   (binaire illisible pour moi). À me fournir en texte, ou capture d'écran des
-   écrans clés.
+1. **Charte visuelle** — couleurs primaire/secondaire et typographie
+   confirmées (voir section 0). Il reste seulement l'encre foncée et l'accent
+   orange à confirmer en hex exact si un rendu pixel-perfect est nécessaire.
 2. **Séquencement** — ce blueprint couvre P0 **et** P1/P2 (Pipeline,
    Finance, Reporting avancé, Administration). Je te propose de garder la
    règle déjà actée : on continue de **construire module par module** dans
@@ -355,3 +397,7 @@ Brouillon créé par le partenaire → Modération assistée IA (Claude) → Dé
 4. **Relecture** — vu le bruit OCR des documents sources, une relecture rapide
    de ta part sur les chiffres/KPIs cités en section 0 serait utile avant que
    je les considère comme définitifs pour calibrer les dashboards.
+5. **Terminologie alignée sur le produit réel** — "Lieux" et "Équipes"
+   corrigés dans ce document après navigation sur l'environnement de test
+   (2026-07-07). À vérifier si d'autres écrans CRM à venir doivent reprendre
+   du vocabulaire produit existant plutôt qu'un vocabulaire générique CRM.
