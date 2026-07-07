@@ -1,9 +1,9 @@
 // Schema Prisma — CRM Cuberfit
 // Module P0-1 : Contacts & comptes (+ tables de journalisation Vue 360° :
-// Interaction et HealthScoreSnapshot, explicitement demandées dans le
+// Interaction et RisqueScoreSnapshot, explicitement demandées dans le
 // périmètre P0-1 pour l'historique complet du compte).
 //
-// Les moteurs de calcul (Health Score P0-3, tickets/SLA P0-5, campagnes P0-4)
+// Les moteurs de calcul (Score de risque P0-3, tickets/SLA P0-5, campagnes P0-4)
 // seront ajoutés aux modules suivants — ce schéma ne pose que les fondations
 // et les points d'accroche (relations, journal d'événements) dont ils auront besoin.
 
@@ -43,8 +43,8 @@ enum PhaseLifecycle {
   CHURN
 }
 
-/// Statut couleur du Health Score (seuils définis dans le module P0-3).
-enum StatutHealthScore {
+/// Statut couleur du Score de risque (seuils définis dans le module P0-3).
+enum StatutRisqueScore {
   VERT
   ORANGE
   ROUGE
@@ -70,7 +70,7 @@ enum TypeInteraction {
   TICKET
   CAMPAGNE
   APPEL_AGENT_VOCAL
-  HEALTH_SCORE_CHANGE
+  RISQUE_SCORE_CHANGE
   NOTE
 }
 
@@ -83,20 +83,63 @@ enum RoleUtilisateur {
   LECTURE_SEULE
 }
 
+/// Événement qui déclenche le démarrage d'un playbook (module P0-2).
+enum TypeDeclencheurPlaybook {
+  ENTREE_PHASE // le compte entre dans une PhaseLifecycle donnée
+  INACTIVITE // aucune activité depuis seuilJoursInactivite jours ("client silencieux")
+  RECLAMATION // usage en baisse + réclamation ("client à risque")
+  ALERTE_RISQUE_SCORE // changement de StatutRisqueScore (branché au moteur P0-3)
+  MANUEL // déclenché à la main par un utilisateur CRM
+}
+
+enum StatutPlaybookExecution {
+  EN_COURS
+  TERMINEE
+  ANNULEE
+}
+
+enum StatutEtapePlaybook {
+  A_FAIRE
+  FAITE
+  IGNOREE
+}
+
+enum TypeActionEtape {
+  RELANCE_AUTO // email/SMS/WhatsApp automatique (connecté N8N en P0-4)
+  TACHE_MANUELLE // tâche assignée à un humain (CSM, Support, Sales)
+  NOTIFICATION_INTERNE // alerte interne uniquement, pas de contact client
+}
+
+enum CanalCommunication {
+  EMAIL
+  SMS
+  WHATSAPP
+  APPEL
+  AUCUN
+}
+
+/// Les 3 "moments de vérité" actés dans la stratégie CS, un par segment.
+enum TypeMomentDeVerite {
+  PREMIERE_SESSION_REUSSIE // Passionnés
+  PREMIERE_RESERVATION // Partenaires
+  PREMIER_REPORTING_QVT_POSITIF // Entreprises QVT
+}
+
 // ---------------------------------------------------------------------------
 // UTILISATEURS INTERNES CRM (rôles — voir section 4 du prompt source)
 // ---------------------------------------------------------------------------
 
 model UtilisateurCRM {
-  id            String          @id @default(cuid())
-  prenom        String
-  nom           String
-  email         String          @unique
-  role          RoleUtilisateur
-  actif         Boolean         @default(true)
-  dateCreation  DateTime        @default(now())
+  id           String          @id @default(cuid())
+  prenom       String
+  nom          String
+  email        String          @unique
+  role         RoleUtilisateur
+  actif        Boolean         @default(true)
+  dateCreation DateTime        @default(now())
 
-  comptesGeres  Account[]       @relation("CSMAssigne")
+  comptesGeres    Account[]        @relation("CSMAssigne")
+  tachesAssignees EtapeExecution[] @relation("TacheAssignee")
 
   @@map("utilisateurs_crm")
 }
@@ -106,40 +149,44 @@ model UtilisateurCRM {
 // ---------------------------------------------------------------------------
 
 model Account {
-  id                    String                @id @default(cuid())
-  segment               Segment
-  nom                   String
-  niveauAccompagnement  NiveauAccompagnement
-  phaseLifecycle        PhaseLifecycle        @default(ONBOARDING)
+  id                   String               @id @default(cuid())
+  segment              Segment
+  nom                  String
+  niveauAccompagnement NiveauAccompagnement
+  phaseLifecycle       PhaseLifecycle       @default(ONBOARDING)
 
   // Dénormalisé pour affichage rapide (liste comptes, dashboard) ; la valeur
-  // de référence reste le dernier HealthScoreSnapshot. Recalculé par le
+  // de référence reste le dernier RisqueScoreSnapshot. Recalculé par le
   // moteur du module P0-3 à chaque nouveau snapshot.
-  healthScoreActuel     Int?
-  healthScoreStatut     StatutHealthScore?
+  risqueScoreActuel Int?
+  risqueScoreStatut StatutRisqueScore?
 
-  csmAssigneId          String?
-  csmAssigne            UtilisateurCRM?       @relation("CSMAssigne", fields: [csmAssigneId], references: [id])
+  csmAssigneId String?
+  csmAssigne   UtilisateurCRM? @relation("CSMAssigne", fields: [csmAssigneId], references: [id])
 
-  dateCreation          DateTime              @default(now())
-  dateDerniereMaj       DateTime              @updatedAt
+  dateCreation    DateTime @default(now())
+  dateDerniereMaj DateTime @updatedAt
 
   contacts              Contact[]
   interactions          Interaction[]
-  healthScoreHistorique HealthScoreSnapshot[]
+  risqueScoreHistorique RisqueScoreSnapshot[]
 
-  passionneProfile      PassionneProfile?
-  partenaireProfile     PartenaireProfile?
-  entrepriseQvtProfile  EntrepriseQvtProfile?
+  passionneProfile     PassionneProfile?
+  partenaireProfile    PartenaireProfile?
+  entrepriseQvtProfile EntrepriseQvtProfile?
 
   // Un Passionné peut avoir plusieurs coachs associés ; un coach (compte
   // Partenaire de type COACH_INDEPENDANT) peut suivre plusieurs Passionnés.
-  coachsAssocies        CoachAssociation[]    @relation("PassionneCoachs")
-  clientsSuivis         CoachAssociation[]    @relation("CoachPassionnes")
+  coachsAssocies CoachAssociation[] @relation("PassionneCoachs")
+  clientsSuivis  CoachAssociation[] @relation("CoachPassionnes")
+
+  // Module P0-2 : Onboarding & lifecycle
+  playbookExecutions PlaybookExecution[]
+  momentsDeVerite    MomentDeVerite[]
 
   @@index([segment])
   @@index([phaseLifecycle])
-  @@index([healthScoreStatut])
+  @@index([risqueScoreStatut])
   @@map("accounts")
 }
 
@@ -147,18 +194,18 @@ model Account {
 /// contact secondaire...). Pour les Passionnés, l'identité vit directement
 /// sur PassionneProfile puisque le compte EST la personne.
 model Contact {
-  id                    String    @id @default(cuid())
-  accountId             String
-  account               Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  prenom                String
-  nom                   String
-  email                 String?
-  telephone             String?
-  role                  String?   // ex: "Interlocuteur RH", "Gérant de salle"
-  estContactPrincipal   Boolean   @default(false)
+  prenom              String
+  nom                 String
+  email               String?
+  telephone           String?
+  role                String? // ex: "Interlocuteur RH", "Gérant de salle"
+  estContactPrincipal Boolean @default(false)
 
-  dateCreation          DateTime  @default(now())
+  dateCreation DateTime @default(now())
 
   @@index([accountId])
   @@map("contacts")
@@ -166,16 +213,16 @@ model Contact {
 
 /// Association Passionné <-> Coach (compte Partenaire de type COACH_INDEPENDANT).
 model CoachAssociation {
-  id                  String    @id @default(cuid())
+  id String @id @default(cuid())
 
-  passionneAccountId  String
-  passionneAccount    Account   @relation("PassionneCoachs", fields: [passionneAccountId], references: [id], onDelete: Cascade)
+  passionneAccountId String
+  passionneAccount   Account @relation("PassionneCoachs", fields: [passionneAccountId], references: [id], onDelete: Cascade)
 
-  coachAccountId      String
-  coachAccount        Account   @relation("CoachPassionnes", fields: [coachAccountId], references: [id], onDelete: Cascade)
+  coachAccountId String
+  coachAccount   Account @relation("CoachPassionnes", fields: [coachAccountId], references: [id], onDelete: Cascade)
 
-  dateDebut           DateTime  @default(now())
-  actif               Boolean   @default(true)
+  dateDebut DateTime @default(now())
+  actif     Boolean  @default(true)
 
   @@unique([passionneAccountId, coachAccountId])
   @@map("coach_associations")
@@ -187,73 +234,73 @@ model CoachAssociation {
 
 /// Fiche Passionné (B2C) — utilisateur final de l'app Access.
 model PassionneProfile {
-  id                    String            @id @default(cuid())
-  accountId             String            @unique
-  account               Account           @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  accountId String  @unique
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  email                 String            @unique
-  telephone             String?
-  dateNaissance         DateTime?
-  ville                 String?
+  email         String    @unique
+  telephone     String?
+  dateNaissance DateTime?
+  ville         String?
 
-  statutAbonnement      StatutAbonnement  @default(AUCUN)
+  statutAbonnement StatutAbonnement @default(AUCUN)
 
   // Historique crédits
-  creditsAchetes        Int               @default(0)
-  creditsConsommes      Int               @default(0)
-  creditsDormants       Int               @default(0)
+  creditsAchetes   Int @default(0)
+  creditsConsommes Int @default(0)
+  creditsDormants  Int @default(0)
 
-  // No-show & annulations (entrent dans le Health Score, poids 10%)
-  nombreNoShow          Int               @default(0)
-  nombreAnnulations     Int               @default(0)
+  // No-show & annulations (entrent dans le Score de risque, poids 10%)
+  nombreNoShow      Int @default(0)
+  nombreAnnulations Int @default(0)
 
   // NPS le plus récent déclaré (échelle -100 à 100 ; à confirmer avec Awa/Fatou)
-  npsScore              Int?
+  npsScore Int?
 
-  dateDerniereActivite  DateTime?
+  dateDerniereActivite DateTime?
 
   @@map("passionne_profiles")
 }
 
 /// Fiche Partenaire (B2B2C) — salle, studio, espace bien-être ou coach indépendant.
 model PartenaireProfile {
-  id                          String                  @id @default(cuid())
-  accountId                   String                  @unique
-  account                     Account                 @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  accountId String  @unique
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  typeActivite                TypeActivitePartenaire
-  ville                       String?
-  adresse                     String?
+  typeActivite TypeActivitePartenaire
+  ville        String?
+  adresse      String?
 
-  statutProfilCompletudePct   Int                     @default(0) // 0-100
-  tauxRemplissageMoyenPct     Int?                    // 0-100
-  reservationsRecuesTotal     Int                     @default(0)
+  statutProfilCompletudePct Int  @default(0) // 0-100
+  tauxRemplissageMoyenPct   Int? // 0-100
+  reservationsRecuesTotal   Int  @default(0)
 
   // Satisfaction déclarée par le partenaire (échelle 0-10 ; à confirmer)
-  satisfactionScore           Int?
+  satisfactionScore Int?
 
-  dateSignature               DateTime?
+  dateSignature DateTime?
 
   @@map("partenaire_profiles")
 }
 
 /// Fiche Entreprise QVT (B2B) — budget qualité de vie au travail.
 model EntrepriseQvtProfile {
-  id                          String    @id @default(cuid())
-  accountId                   String    @unique
-  account                     Account   @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  accountId String  @unique
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  secteurActivite             String?
-  tailleEffectif              Int?
+  secteurActivite String?
+  tailleEffectif  Int?
 
-  budgetAllouAnnuel           Decimal?  @db.Decimal(12, 2)
-  budgetConsommeAnnuel        Decimal?  @db.Decimal(12, 2)
+  budgetAllouAnnuel    Decimal? @db.Decimal(12, 2)
+  budgetConsommeAnnuel Decimal? @db.Decimal(12, 2)
 
-  pctEmployesActives          Int?      // 0-100, activés au moins une fois
-  pctEmployesActifsMensuels   Int?      // 0-100, actifs sur le mois en cours
+  pctEmployesActives        Int? // 0-100, activés au moins une fois
+  pctEmployesActifsMensuels Int? // 0-100, actifs sur le mois en cours
 
-  dateSignature               DateTime?
-  dateRenouvellement          DateTime?
+  dateSignature      DateTime?
+  dateRenouvellement DateTime?
 
   @@map("entreprise_qvt_profiles")
 }
@@ -266,36 +313,156 @@ model EntrepriseQvtProfile {
 /// campagnes reçues, appels agent vocal. Les modules P0-4/P0-5 écriront ici ;
 /// P0-1 ne fait que poser la table pour que la Vue 360° ait une timeline.
 model Interaction {
-  id               String           @id @default(cuid())
-  accountId        String
-  account          Account          @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  id        String  @id @default(cuid())
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  type             TypeInteraction
-  titre            String
-  description      String?
-  metadata         Json?            // détails spécifiques au type (ex: id ticket, canal, montant)
+  type        TypeInteraction
+  titre       String
+  description String?
+  metadata    Json? // détails spécifiques au type (ex: id ticket, canal, montant)
 
-  dateInteraction  DateTime         @default(now())
-  creePar          String?          // nom utilisateur CRM ou "Agent vocal ElevenLabs"
+  dateInteraction DateTime @default(now())
+  creePar         String? // nom utilisateur CRM ou "Agent vocal ElevenLabs"
 
   @@index([accountId, dateInteraction])
   @@map("interactions")
 }
 
-/// Snapshot du Health Score à un instant T, pour tracer "Health Score dans le
+/// Snapshot du Score de risque à un instant T, pour tracer "Score de risque dans le
 /// temps" en Vue 360°. Le calcul lui-même (pondérations, seuils) est le
 /// moteur du module P0-3 — ici on ne stocke que le résultat historisé.
-model HealthScoreSnapshot {
-  id              String             @id @default(cuid())
-  accountId       String
-  account         Account            @relation(fields: [accountId], references: [id], onDelete: Cascade)
+model RisqueScoreSnapshot {
+  id        String  @id @default(cuid())
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
-  score           Int                // 0-100
-  statut          StatutHealthScore
-  detailCriteres  Json               // décomposition par critère pondéré (P0-3)
+  score          Int // 0-100
+  statut         StatutRisqueScore
+  detailCriteres Json // décomposition par critère pondéré (P0-3)
 
-  dateCalcul      DateTime           @default(now())
+  dateCalcul DateTime @default(now())
 
   @@index([accountId, dateCalcul])
-  @@map("health_score_snapshots")
+  @@map("risque_score_snapshots")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE P0-2 — ONBOARDING & LIFECYCLE (playbooks par phase)
+//
+// Reproduit les 3 phases actées (Onboarding / Adoption / Expansion) et les
+// playbooks de gestion de crise du prompt source, sous forme de règles
+// explicites if/then : un Playbook se déclenche (TypeDeclencheurPlaybook),
+// exécute une suite d'PlaybookEtape datées en J+n, et produit un
+// PlaybookExecution/EtapeExecution par compte pour le suivi. Les
+// MomentDeVerite sont trackés séparément car ils ne sont pas des étapes à
+// accomplir mais des jalons à observer (1ère session réussie, etc.).
+// ---------------------------------------------------------------------------
+
+/// Modèle (template) de playbook — configurable sans redéploiement, à l'image
+/// des pondérations Score de risque.
+model Playbook {
+  id          String  @id @default(cuid())
+  nom         String
+  description String?
+
+  // null = s'applique à tous les segments (ex: crise technique)
+  segment Segment?
+
+  // Phase qui déclenche le playbook si typeDeclencheur = ENTREE_PHASE ;
+  // null pour les playbooks de crise déclenchés autrement.
+  phaseCible PhaseLifecycle?
+
+  typeDeclencheur TypeDeclencheurPlaybook
+
+  // Utilisé uniquement si typeDeclencheur = INACTIVITE ("relance auto si
+  // inactivité > X jours").
+  seuilJoursInactivite Int?
+
+  actif        Boolean  @default(true)
+  dateCreation DateTime @default(now())
+
+  etapes     PlaybookEtape[]
+  executions PlaybookExecution[]
+
+  @@index([segment, phaseCible])
+  @@map("playbooks")
+}
+
+/// Étape ordonnée d'un playbook, avec son délai depuis le déclenchement
+/// (ex: "relance J+3", "relance J+7").
+model PlaybookEtape {
+  id         String   @id @default(cuid())
+  playbookId String
+  playbook   Playbook @relation(fields: [playbookId], references: [id], onDelete: Cascade)
+
+  ordre       Int
+  titre       String
+  description String?
+  delaiJours  Int                @default(0)
+  typeAction  TypeActionEtape
+  canal       CanalCommunication @default(AUCUN)
+
+  executions EtapeExecution[]
+
+  @@unique([playbookId, ordre])
+  @@map("playbook_etapes")
+}
+
+/// Instance d'un Playbook en cours (ou terminé) pour un compte donné.
+model PlaybookExecution {
+  id        String  @id @default(cuid())
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  playbookId String
+  playbook   Playbook @relation(fields: [playbookId], references: [id])
+
+  statut            StatutPlaybookExecution @default(EN_COURS)
+  dateDeclenchement DateTime                @default(now())
+  dateFin           DateTime?
+
+  etapes EtapeExecution[]
+
+  @@index([accountId, statut])
+  @@map("playbook_executions")
+}
+
+/// Réalisation (ou non) d'une PlaybookEtape pour une exécution donnée.
+model EtapeExecution {
+  id          String            @id @default(cuid())
+  executionId String
+  execution   PlaybookExecution @relation(fields: [executionId], references: [id], onDelete: Cascade)
+
+  etapeId String
+  etape   PlaybookEtape @relation(fields: [etapeId], references: [id])
+
+  statut          StatutEtapePlaybook @default(A_FAIRE)
+  dateEcheance    DateTime
+  dateRealisation DateTime?
+
+  // Renseigné uniquement pour les étapes typeAction = TACHE_MANUELLE.
+  assigneAId String?
+  assigneA   UtilisateurCRM? @relation("TacheAssignee", fields: [assigneAId], references: [id])
+
+  @@index([executionId, statut])
+  @@map("etape_executions")
+}
+
+/// Jalon à observer (pas une tâche à cocher) : un par segment, actés dans la
+/// stratégie CS comme signal de réussite de l'onboarding.
+model MomentDeVerite {
+  id        String  @id @default(cuid())
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  type TypeMomentDeVerite
+
+  // Échéance cible (ex: J+14 depuis la création du compte) pour calibrer les
+  // alertes "toujours pas atteint à J+X".
+  dateCibleAvant DateTime?
+  dateAtteint    DateTime?
+
+  @@unique([accountId, type])
+  @@map("moments_de_verite")
 }

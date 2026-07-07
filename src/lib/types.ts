@@ -2,10 +2,15 @@ import type {
   Segment,
   NiveauAccompagnement,
   PhaseLifecycle,
-  StatutHealthScore,
+  StatutRisqueScore,
   StatutAbonnement,
   TypeActivitePartenaire,
   TypeInteraction,
+  TypeMomentDeVerite,
+  StatutEtapePlaybook,
+  StatutPlaybookExecution,
+  TypeActionEtape,
+  CanalCommunication,
 } from "@/generated/prisma/enums";
 
 export type ContactVM = {
@@ -27,10 +32,10 @@ export type InteractionVM = {
   creePar?: string;
 };
 
-export type HealthScoreSnapshotVM = {
+export type RisqueScoreSnapshotVM = {
   id: string;
   score: number;
-  statut: StatutHealthScore;
+  statut: StatutRisqueScore;
   dateCalcul: string;
   detailCriteres: { critere: string; poidsPct: number; valeur: string }[];
 };
@@ -72,19 +77,48 @@ export type EntrepriseQvtProfileVM = {
   dateRenouvellement?: string;
 };
 
+export type MomentDeVeriteVM = {
+  id: string;
+  type: TypeMomentDeVerite;
+  dateCibleAvant?: string;
+  dateAtteint?: string;
+};
+
+export type EtapeExecutionVM = {
+  id: string;
+  ordre: number;
+  titre: string;
+  typeAction: TypeActionEtape;
+  canal: CanalCommunication;
+  statut: StatutEtapePlaybook;
+  dateEcheance: string;
+  dateRealisation?: string;
+  assigneA?: string;
+};
+
+export type PlaybookExecutionVM = {
+  id: string;
+  playbookNom: string;
+  statut: StatutPlaybookExecution;
+  dateDeclenchement: string;
+  etapes: EtapeExecutionVM[];
+};
+
 export type AccountVM = {
   id: string;
   segment: Segment;
   nom: string;
   niveauAccompagnement: NiveauAccompagnement;
   phaseLifecycle: PhaseLifecycle;
-  healthScoreActuel?: number;
-  healthScoreStatut?: StatutHealthScore;
+  risqueScoreActuel?: number;
+  risqueScoreStatut?: StatutRisqueScore;
   csmAssigne?: string;
   dateCreation: string;
   contacts: ContactVM[];
   interactions: InteractionVM[];
-  healthScoreHistorique: HealthScoreSnapshotVM[];
+  risqueScoreHistorique: RisqueScoreSnapshotVM[];
+  momentsDeVerite: MomentDeVeriteVM[];
+  playbookExecutions: PlaybookExecutionVM[];
   passionneProfile?: PassionneProfileVM;
   partenaireProfile?: PartenaireProfileVM;
   entrepriseQvtProfile?: EntrepriseQvtProfileVM;

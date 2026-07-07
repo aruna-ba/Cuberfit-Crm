@@ -1,17 +1,17 @@
-import type { StatutHealthScore, NiveauAccompagnement } from "@/generated/prisma/enums";
+import type { StatutRisqueScore, NiveauAccompagnement } from "@/generated/prisma/enums";
 import {
-  healthScoreBadgeClass,
+  risqueScoreBadgeClass,
   niveauAccompagnementBadgeClass,
   niveauAccompagnementLabel,
-  statutHealthScoreLabel,
+  statutRisqueScoreLabel,
 } from "@/lib/labels";
 
-export function HealthScoreBadge({
+export function RisqueScoreBadge({
   score,
   statut,
 }: {
   score?: number;
-  statut?: StatutHealthScore;
+  statut?: StatutRisqueScore;
 }) {
   if (score === undefined || statut === undefined) {
     return (
@@ -22,10 +22,10 @@ export function HealthScoreBadge({
   }
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${healthScoreBadgeClass[statut]}`}
+      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${risqueScoreBadgeClass[statut]}`}
     >
       <span className="font-semibold">{score}</span>
-      <span>· {statutHealthScoreLabel[statut]}</span>
+      <span>· {statutRisqueScoreLabel[statut]}</span>
     </span>
   );
 }

@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { mockAccounts } from "@/lib/mock-data";
 import { segmentLabel, phaseLifecycleLabel } from "@/lib/labels";
-import { AccompagnementBadge, HealthScoreBadge } from "@/components/ui";
+import { AccompagnementBadge, RisqueScoreBadge } from "@/components/ui";
 import type { Segment } from "@/generated/prisma/enums";
 
 const SEGMENT_TABS: { key: Segment | "TOUS"; label: string }[] = [
@@ -72,7 +72,7 @@ export default async function ComptesPage({
               <th className="px-4 py-3 font-medium">Segment</th>
               <th className="px-4 py-3 font-medium">Phase lifecycle</th>
               <th className="px-4 py-3 font-medium">Accompagnement</th>
-              <th className="px-4 py-3 font-medium">Health Score</th>
+              <th className="px-4 py-3 font-medium">Score de risque</th>
               <th className="px-4 py-3 font-medium">CSM assigné</th>
             </tr>
           </thead>
@@ -95,9 +95,9 @@ export default async function ComptesPage({
                   <AccompagnementBadge niveau={account.niveauAccompagnement} />
                 </td>
                 <td className="px-4 py-3">
-                  <HealthScoreBadge
-                    score={account.healthScoreActuel}
-                    statut={account.healthScoreStatut}
+                  <RisqueScoreBadge
+                    score={account.risqueScoreActuel}
+                    statut={account.risqueScoreStatut}
                   />
                 </td>
                 <td className="px-4 py-3 text-slate-600">{account.csmAssigne ?? "—"}</td>
