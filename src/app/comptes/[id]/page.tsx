@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAccountById } from "@/lib/mock-data";
+import { getTicketsByAccountId } from "@/lib/tickets";
 import {
   segmentLabel,
   phaseLifecycleLabel,
@@ -11,6 +12,8 @@ import {
   statutPlaybookExecutionLabel,
   statutEtapePlaybookLabel,
   canalCommunicationLabel,
+  prioriteTicketLabel,
+  statutTicketLabel,
 } from "@/lib/labels";
 import { AccompagnementBadge, Card, Field, RisqueScoreBadge } from "@/components/ui";
 
@@ -36,6 +39,7 @@ export default async function CompteDetailPage({
   const { id } = await params;
   const account = getAccountById(id);
   if (!account) notFound();
+  const tickets = getTicketsByAccountId(account.id);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
@@ -282,6 +286,25 @@ export default async function CompteDetailPage({
                   </div>
                 ))}
               </div>
+            )}
+          </Card>
+
+          <Card title={`Tickets (${tickets.length})`}>
+            {tickets.length === 0 ? (
+              <p className="text-sm text-slate-400">Aucun ticket pour ce compte.</p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {tickets.map((ticket) => (
+                  <li key={ticket.id} className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2">
+                    <Link href={`/tickets/${ticket.id}`} className="text-sm font-medium text-slate-900 hover:underline">
+                      #{ticket.numero} — {ticket.sujet}
+                    </Link>
+                    <span className="text-xs text-slate-500">
+                      {prioriteTicketLabel[ticket.priorite]} · {statutTicketLabel[ticket.statut]}
+                    </span>
+                  </li>
+                ))}
+              </ul>
             )}
           </Card>
 

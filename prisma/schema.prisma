@@ -141,6 +141,7 @@ model UtilisateurCRM {
   comptesGeres          Account[]                @relation("CSMAssigne")
   tachesAssignees       EtapeExecution[]         @relation("TacheAssignee")
   ponderationsModifiees PonderationRisqueScore[] @relation("PonderationModifiee")
+  ticketsAssignes       Ticket[]                 @relation("TicketAssigne")
 
   @@map("utilisateurs_crm")
 }
@@ -187,6 +188,9 @@ model Account {
 
   // Module P0-4 : Communication multicanale
   campagneEnvois CampagneEnvoi[]
+
+  // Module P0-5 : Tickets & support
+  tickets Ticket[]
 
   @@index([segment])
   @@index([phaseLifecycle])
@@ -621,4 +625,74 @@ model CampagneEnvoi {
 
   @@unique([campagneId, accountId])
   @@map("campagne_envois")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE P0-5 — TICKETS & SUPPORT (façon "Service Cloud / Cases")
+//
+// SLA cibles actés : 1ère réponse < 4h ouvrées, résolution standard 24-48h
+// (hors incidents majeurs), ≈80% des demandes routine traitées par l'agent
+// vocal RVI — les 20% résiduels génèrent automatiquement un ticket
+// (origine = AUTO_AGENT_VOCAL). CSAT recueilli à la clôture.
+// ---------------------------------------------------------------------------
+
+enum CanalEntreeTicket {
+  APP_MOBILE
+  WHATSAPP
+  EMAIL
+  AGENT_VOCAL
+  APPEL_TELEPHONIQUE
+}
+
+/// Priorités métier Cuberfit, en complément des SLA génériques.
+enum PrioriteTicket {
+  URGENTE // ex: paiement débité sans crédit, donnée de santé Bloom compromise — hors SLA standard, traitement immédiat
+  HAUTE // ex: réservation annulée sans remboursement, litige coach/partenaire — dans le SLA 4h/24-48h
+  MOYENNE // ex: question crédits dormants, modification profil — SLA standard
+  BASSE // ex: question générale, suggestion produit — self-service en priorité
+}
+
+enum StatutTicket {
+  OUVERT
+  EN_COURS
+  EN_ATTENTE_CLIENT
+  RESOLU
+  FERME
+}
+
+/// Distingue les tickets créés manuellement de ceux créés automatiquement
+/// par l'agent vocal (escalade des ~20% de demandes non résolues par le RVI).
+enum OrigineTicket {
+  MANUEL
+  AUTO_AGENT_VOCAL
+}
+
+model Ticket {
+  id     String @id @default(cuid())
+  numero Int    @default(autoincrement())
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  sujet       String
+  description String?
+  canalEntree CanalEntreeTicket
+  priorite    PrioriteTicket
+  statut      StatutTicket      @default(OUVERT)
+  origine     OrigineTicket     @default(MANUEL)
+
+  assigneAId String?
+  assigneA   UtilisateurCRM? @relation("TicketAssigne", fields: [assigneAId], references: [id])
+
+  dateCreation        DateTime  @default(now())
+  datePremiereReponse DateTime?
+  dateResolution      DateTime?
+
+  // CSAT recueilli à la clôture du ticket (échelle 1-5).
+  csatScore       Int?
+  csatCommentaire String?
+
+  @@index([accountId, statut])
+  @@index([priorite, statut])
+  @@map("tickets")
 }

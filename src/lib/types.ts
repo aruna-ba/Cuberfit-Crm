@@ -13,6 +13,10 @@ import type {
   CanalCommunication,
   StatutCampagne,
   StatutEnvoiCampagne,
+  CanalEntreeTicket,
+  PrioriteTicket,
+  StatutTicket,
+  OrigineTicket,
 } from "@/generated/prisma/enums";
 
 export type ContactVM = {
@@ -165,4 +169,27 @@ export type CampagneVM = {
   dateEnvoi?: string;
   dateCreation: string;
   envois: CampagneEnvoiVM[];
+};
+
+// ---------------------------------------------------------------------------
+// Module P0-5 — Tickets & support
+// ---------------------------------------------------------------------------
+
+export type TicketVM = {
+  id: string;
+  numero: number;
+  accountId: string;
+  accountNom: string;
+  sujet: string;
+  description?: string;
+  canalEntree: CanalEntreeTicket;
+  priorite: PrioriteTicket;
+  statut: StatutTicket;
+  origine: OrigineTicket;
+  assigneA?: string;
+  dateCreation: string;
+  datePremiereReponse?: string;
+  dateResolution?: string;
+  csatScore?: number;
+  csatCommentaire?: string;
 };
