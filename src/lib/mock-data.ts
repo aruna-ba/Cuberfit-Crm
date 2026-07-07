@@ -46,6 +46,22 @@ export const mockAccounts: AccountVM[] = [
         { critere: "Tickets ouverts", poidsPct: 10, valeur: "0" },
       ] },
     ],
+    momentsDeVerite: [
+      { id: "mv_1", type: "PREMIERE_SESSION_REUSSIE", dateCibleAvant: "2026-02-24", dateAtteint: "2026-02-15" },
+    ],
+    playbookExecutions: [
+      {
+        id: "pe_1",
+        playbookNom: "Onboarding Passionné",
+        statut: "TERMINEE",
+        dateDeclenchement: "2026-02-10",
+        etapes: [
+          { id: "ee_1", ordre: 1, titre: "Tutoriel de bienvenue", typeAction: "NOTIFICATION_INTERNE", canal: "AUCUN", statut: "FAITE", dateEcheance: "2026-02-10", dateRealisation: "2026-02-10" },
+          { id: "ee_2", ordre: 2, titre: "Relance J+3", typeAction: "RELANCE_AUTO", canal: "EMAIL", statut: "FAITE", dateEcheance: "2026-02-13", dateRealisation: "2026-02-13" },
+          { id: "ee_3", ordre: 3, titre: "Relance J+7", typeAction: "RELANCE_AUTO", canal: "WHATSAPP", statut: "FAITE", dateEcheance: "2026-02-17", dateRealisation: "2026-02-17" },
+        ],
+      },
+    ],
   },
   {
     id: "acc_passionne_2",
@@ -79,6 +95,68 @@ export const mockAccounts: AccountVM[] = [
       { id: "hs_3", score: 58, statut: "ORANGE", dateCalcul: "2026-05-01", detailCriteres: [] },
       { id: "hs_4", score: 34, statut: "ROUGE", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
+    momentsDeVerite: [
+      { id: "mv_2", type: "PREMIERE_SESSION_REUSSIE", dateCibleAvant: "2026-03-16", dateAtteint: "2026-03-08" },
+    ],
+    playbookExecutions: [
+      {
+        id: "pe_2",
+        playbookNom: "Client à risque",
+        statut: "EN_COURS",
+        dateDeclenchement: "2026-06-18",
+        etapes: [
+          { id: "ee_4", ordre: 1, titre: "Notifier le CSM du signal négatif", typeAction: "NOTIFICATION_INTERNE", canal: "AUCUN", statut: "FAITE", dateEcheance: "2026-06-18", dateRealisation: "2026-06-18" },
+          { id: "ee_5", ordre: 2, titre: "Appel de suivi personnalisé", typeAction: "TACHE_MANUELLE", canal: "APPEL", statut: "A_FAIRE", dateEcheance: "2026-07-09", assigneA: "Fatou Sakho" },
+        ],
+      },
+    ],
+  },
+  {
+    id: "acc_passionne_3",
+    segment: "PASSIONNE",
+    nom: "Moussa Diagne",
+    niveauAccompagnement: "TECH_TOUCH",
+    phaseLifecycle: "ADOPTION",
+    healthScoreActuel: 51,
+    healthScoreStatut: "ORANGE",
+    csmAssigne: "Fatou Sakho",
+    dateCreation: "2026-04-05",
+    contacts: [],
+    passionneProfile: {
+      email: "moussa.diagne@example.sn",
+      telephone: "+221 78 456 12 90",
+      ville: "Dakar",
+      statutAbonnement: "ACCESS",
+      creditsAchetes: 60,
+      creditsConsommes: 45,
+      creditsDormants: 15,
+      nombreNoShow: 0,
+      nombreAnnulations: 1,
+      npsScore: 40,
+      dateDerniereActivite: "2026-06-12",
+      coachsAssocies: [],
+    },
+    interactions: [
+      { id: "int_9", type: "ACHAT", titre: "Achat pack 10 crédits", dateInteraction: "2026-05-20", creePar: "App Access" },
+    ],
+    healthScoreHistorique: [
+      { id: "hs_11", score: 66, statut: "ORANGE", dateCalcul: "2026-06-01", detailCriteres: [] },
+      { id: "hs_12", score: 51, statut: "ORANGE", dateCalcul: "2026-07-01", detailCriteres: [] },
+    ],
+    momentsDeVerite: [
+      { id: "mv_3", type: "PREMIERE_SESSION_REUSSIE", dateCibleAvant: "2026-04-19", dateAtteint: "2026-04-11" },
+    ],
+    playbookExecutions: [
+      {
+        id: "pe_3",
+        playbookNom: "Client silencieux",
+        statut: "EN_COURS",
+        dateDeclenchement: "2026-07-02",
+        etapes: [
+          { id: "ee_6", ordre: 1, titre: "Relance automatique inactivité (>14j)", typeAction: "RELANCE_AUTO", canal: "WHATSAPP", statut: "A_FAIRE", dateEcheance: "2026-07-07" },
+        ],
+      },
+    ],
   },
   {
     id: "acc_partenaire_1",
@@ -110,6 +188,10 @@ export const mockAccounts: AccountVM[] = [
       { id: "hs_5", score: 68, statut: "ORANGE", dateCalcul: "2026-04-01", detailCriteres: [] },
       { id: "hs_6", score: 76, statut: "VERT", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
+    momentsDeVerite: [
+      { id: "mv_4", type: "PREMIERE_RESERVATION", dateCibleAvant: "2025-12-04", dateAtteint: "2025-11-27" },
+    ],
+    playbookExecutions: [],
   },
   {
     id: "acc_partenaire_2",
@@ -135,6 +217,10 @@ export const mockAccounts: AccountVM[] = [
     healthScoreHistorique: [
       { id: "hs_7", score: 55, statut: "ORANGE", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
+    momentsDeVerite: [
+      { id: "mv_5", type: "PREMIERE_RESERVATION", dateCibleAvant: "2026-01-29", dateAtteint: "2026-01-22" },
+    ],
+    playbookExecutions: [],
   },
   {
     id: "acc_entreprise_1",
@@ -167,6 +253,10 @@ export const mockAccounts: AccountVM[] = [
       { id: "hs_8", score: 81, statut: "VERT", dateCalcul: "2026-04-01", detailCriteres: [] },
       { id: "hs_9", score: 88, statut: "VERT", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
+    momentsDeVerite: [
+      { id: "mv_6", type: "PREMIER_REPORTING_QVT_POSITIF", dateCibleAvant: "2025-09-15", dateAtteint: "2025-09-10" },
+    ],
+    playbookExecutions: [],
   },
   {
     id: "acc_entreprise_2",
@@ -196,6 +286,23 @@ export const mockAccounts: AccountVM[] = [
     ],
     healthScoreHistorique: [
       { id: "hs_10", score: 45, statut: "ORANGE", dateCalcul: "2026-07-01", detailCriteres: [] },
+    ],
+    momentsDeVerite: [
+      { id: "mv_7", type: "PREMIER_REPORTING_QVT_POSITIF", dateCibleAvant: "2026-06-15" },
+    ],
+    playbookExecutions: [
+      {
+        id: "pe_4",
+        playbookNom: "Onboarding Entreprise QVT",
+        statut: "EN_COURS",
+        dateDeclenchement: "2026-06-01",
+        etapes: [
+          { id: "ee_7", ordre: 1, titre: "Réunion DRH de lancement", typeAction: "TACHE_MANUELLE", canal: "APPEL", statut: "FAITE", dateEcheance: "2026-06-01", dateRealisation: "2026-06-01", assigneA: "Harouna Ba" },
+          { id: "ee_8", ordre: 2, titre: "Envoi du kit de communication", typeAction: "RELANCE_AUTO", canal: "EMAIL", statut: "FAITE", dateEcheance: "2026-06-03", dateRealisation: "2026-06-04" },
+          { id: "ee_9", ordre: 3, titre: "Webinaire employés", typeAction: "TACHE_MANUELLE", canal: "APPEL", statut: "A_FAIRE", dateEcheance: "2026-07-10", assigneA: "Harouna Ba" },
+          { id: "ee_10", ordre: 4, titre: "Invitations automatiques aux non-inscrits", typeAction: "RELANCE_AUTO", canal: "EMAIL", statut: "A_FAIRE", dateEcheance: "2026-07-12" },
+        ],
+      },
     ],
   },
 ];

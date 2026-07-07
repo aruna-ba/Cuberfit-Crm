@@ -6,6 +6,11 @@ import type {
   StatutAbonnement,
   TypeActivitePartenaire,
   TypeInteraction,
+  TypeMomentDeVerite,
+  StatutEtapePlaybook,
+  StatutPlaybookExecution,
+  TypeActionEtape,
+  CanalCommunication,
 } from "@/generated/prisma/enums";
 
 export const segmentLabel: Record<Segment, string> = {
@@ -67,4 +72,58 @@ export const niveauAccompagnementBadgeClass: Record<NiveauAccompagnement, string
   TECH_TOUCH: "bg-sky-100 text-sky-800 ring-sky-600/20",
   LOW_TOUCH: "bg-slate-100 text-slate-700 ring-slate-600/20",
   HIGH_TOUCH: "bg-violet-100 text-violet-800 ring-violet-600/20",
+};
+
+// ---------------------------------------------------------------------------
+// Module P0-2 — Onboarding & lifecycle
+// ---------------------------------------------------------------------------
+
+/// Objectif de chaque phase, tel qu'acté dans la stratégie CS — affiché en
+/// sous-titre des colonnes de la Vue onboarding/lifecycle par phase.
+export const phaseLifecycleObjectif: Record<PhaseLifecycle, string> = {
+  ONBOARDING: "1ère expérience réussie en 7-14 jours",
+  ADOPTION: "Ancrer l'usage régulier",
+  EXPANSION: "Upsell, renouvellement, extension",
+  A_RISQUE: "Prévenir le churn — action sous 7 jours",
+  CHURN: "Compte perdu ou parti",
+};
+
+export const phaseLifecycleBadgeClass: Record<PhaseLifecycle, string> = {
+  ONBOARDING: "bg-sky-100 text-sky-800 ring-sky-600/20",
+  ADOPTION: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
+  EXPANSION: "bg-violet-100 text-violet-800 ring-violet-600/20",
+  A_RISQUE: "bg-amber-100 text-amber-800 ring-amber-600/20",
+  CHURN: "bg-red-100 text-red-800 ring-red-600/20",
+};
+
+export const typeMomentDeVeriteLabel: Record<TypeMomentDeVerite, string> = {
+  PREMIERE_SESSION_REUSSIE: "1ère session réussie",
+  PREMIERE_RESERVATION: "1ère réservation reçue",
+  PREMIER_REPORTING_QVT_POSITIF: "1er reporting QVT positif",
+};
+
+export const statutEtapePlaybookLabel: Record<StatutEtapePlaybook, string> = {
+  A_FAIRE: "À faire",
+  FAITE: "Faite",
+  IGNOREE: "Ignorée",
+};
+
+export const statutPlaybookExecutionLabel: Record<StatutPlaybookExecution, string> = {
+  EN_COURS: "En cours",
+  TERMINEE: "Terminée",
+  ANNULEE: "Annulée",
+};
+
+export const typeActionEtapeLabel: Record<TypeActionEtape, string> = {
+  RELANCE_AUTO: "Relance automatique",
+  TACHE_MANUELLE: "Tâche manuelle",
+  NOTIFICATION_INTERNE: "Notification interne",
+};
+
+export const canalCommunicationLabel: Record<CanalCommunication, string> = {
+  EMAIL: "Email",
+  SMS: "SMS",
+  WHATSAPP: "WhatsApp",
+  APPEL: "Appel",
+  AUCUN: "—",
 };

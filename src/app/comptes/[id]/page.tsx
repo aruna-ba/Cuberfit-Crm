@@ -7,6 +7,10 @@ import {
   statutAbonnementLabel,
   typeActivitePartenaireLabel,
   typeInteractionLabel,
+  typeMomentDeVeriteLabel,
+  statutPlaybookExecutionLabel,
+  statutEtapePlaybookLabel,
+  canalCommunicationLabel,
 } from "@/lib/labels";
 import { AccompagnementBadge, Card, Field, HealthScoreBadge } from "@/components/ui";
 
@@ -207,6 +211,76 @@ export default async function CompteDetailPage({
                     </li>
                   ))}
               </ul>
+            )}
+          </Card>
+
+          <Card title="Onboarding & lifecycle">
+            {account.momentsDeVerite.length === 0 && account.playbookExecutions.length === 0 ? (
+              <p className="text-sm text-slate-400">Aucun playbook actif pour ce compte.</p>
+            ) : (
+              <div className="flex flex-col gap-4">
+                {account.momentsDeVerite.length > 0 && (
+                  <ul className="flex flex-col gap-1.5">
+                    {account.momentsDeVerite.map((moment) => (
+                      <li key={moment.id} className="flex items-center gap-2 text-sm">
+                        <span className={moment.dateAtteint ? "text-emerald-600" : "text-slate-400"}>
+                          {moment.dateAtteint ? "✓" : "○"}
+                        </span>
+                        <span className="text-slate-700">{typeMomentDeVeriteLabel[moment.type]}</span>
+                        <span className="text-slate-400">
+                          {moment.dateAtteint
+                            ? `— atteint le ${formatDate(moment.dateAtteint)}`
+                            : moment.dateCibleAvant
+                              ? `— attendu avant le ${formatDate(moment.dateCibleAvant)}`
+                              : ""}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {account.playbookExecutions.map((execution) => (
+                  <div key={execution.id} className="rounded-md border border-slate-100 p-3">
+                    <div className="mb-2 flex items-center justify-between">
+                      <p className="text-sm font-medium text-slate-900">{execution.playbookNom}</p>
+                      <span className="text-xs text-slate-500">
+                        {statutPlaybookExecutionLabel[execution.statut]}
+                      </span>
+                    </div>
+                    <ul className="flex flex-col gap-1.5">
+                      {execution.etapes.map((etape) => (
+                        <li key={etape.id} className="flex items-start gap-2 text-sm">
+                          <span
+                            className={
+                              etape.statut === "FAITE"
+                                ? "text-emerald-600"
+                                : etape.statut === "IGNOREE"
+                                  ? "text-slate-300"
+                                  : "text-amber-500"
+                            }
+                          >
+                            {etape.statut === "FAITE" ? "✓" : etape.statut === "IGNOREE" ? "–" : "○"}
+                          </span>
+                          <span className="text-slate-700">
+                            {etape.titre}
+                            {etape.canal !== "AUCUN" && (
+                              <span className="text-slate-400"> · {canalCommunicationLabel[etape.canal]}</span>
+                            )}
+                            <span className="text-slate-400">
+                              {" — "}
+                              {statutEtapePlaybookLabel[etape.statut]}
+                              {etape.dateRealisation
+                                ? ` le ${formatDate(etape.dateRealisation)}`
+                                : ` (échéance ${formatDate(etape.dateEcheance)})`}
+                              {etape.assigneA ? ` · ${etape.assigneA}` : ""}
+                            </span>
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
+              </div>
             )}
           </Card>
 

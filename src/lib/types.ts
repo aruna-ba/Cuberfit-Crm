@@ -6,6 +6,11 @@ import type {
   StatutAbonnement,
   TypeActivitePartenaire,
   TypeInteraction,
+  TypeMomentDeVerite,
+  StatutEtapePlaybook,
+  StatutPlaybookExecution,
+  TypeActionEtape,
+  CanalCommunication,
 } from "@/generated/prisma/enums";
 
 export type ContactVM = {
@@ -72,6 +77,33 @@ export type EntrepriseQvtProfileVM = {
   dateRenouvellement?: string;
 };
 
+export type MomentDeVeriteVM = {
+  id: string;
+  type: TypeMomentDeVerite;
+  dateCibleAvant?: string;
+  dateAtteint?: string;
+};
+
+export type EtapeExecutionVM = {
+  id: string;
+  ordre: number;
+  titre: string;
+  typeAction: TypeActionEtape;
+  canal: CanalCommunication;
+  statut: StatutEtapePlaybook;
+  dateEcheance: string;
+  dateRealisation?: string;
+  assigneA?: string;
+};
+
+export type PlaybookExecutionVM = {
+  id: string;
+  playbookNom: string;
+  statut: StatutPlaybookExecution;
+  dateDeclenchement: string;
+  etapes: EtapeExecutionVM[];
+};
+
 export type AccountVM = {
   id: string;
   segment: Segment;
@@ -85,6 +117,8 @@ export type AccountVM = {
   contacts: ContactVM[];
   interactions: InteractionVM[];
   healthScoreHistorique: HealthScoreSnapshotVM[];
+  momentsDeVerite: MomentDeVeriteVM[];
+  playbookExecutions: PlaybookExecutionVM[];
   passionneProfile?: PassionneProfileVM;
   partenaireProfile?: PartenaireProfileVM;
   entrepriseQvtProfile?: EntrepriseQvtProfileVM;
