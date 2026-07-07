@@ -2,7 +2,7 @@ import type {
   Segment,
   NiveauAccompagnement,
   PhaseLifecycle,
-  StatutHealthScore,
+  StatutRisqueScore,
   StatutAbonnement,
   TypeActivitePartenaire,
   TypeInteraction,
@@ -32,10 +32,10 @@ export type InteractionVM = {
   creePar?: string;
 };
 
-export type HealthScoreSnapshotVM = {
+export type RisqueScoreSnapshotVM = {
   id: string;
   score: number;
-  statut: StatutHealthScore;
+  statut: StatutRisqueScore;
   dateCalcul: string;
   detailCriteres: { critere: string; poidsPct: number; valeur: string }[];
 };
@@ -110,13 +110,13 @@ export type AccountVM = {
   nom: string;
   niveauAccompagnement: NiveauAccompagnement;
   phaseLifecycle: PhaseLifecycle;
-  healthScoreActuel?: number;
-  healthScoreStatut?: StatutHealthScore;
+  risqueScoreActuel?: number;
+  risqueScoreStatut?: StatutRisqueScore;
   csmAssigne?: string;
   dateCreation: string;
   contacts: ContactVM[];
   interactions: InteractionVM[];
-  healthScoreHistorique: HealthScoreSnapshotVM[];
+  risqueScoreHistorique: RisqueScoreSnapshotVM[];
   momentsDeVerite: MomentDeVeriteVM[];
   playbookExecutions: PlaybookExecutionVM[];
   passionneProfile?: PassionneProfileVM;

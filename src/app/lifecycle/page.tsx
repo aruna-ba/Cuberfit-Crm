@@ -8,7 +8,7 @@ import {
   typeMomentDeVeriteLabel,
   canalCommunicationLabel,
 } from "@/lib/labels";
-import { HealthScoreBadge } from "@/components/ui";
+import { RisqueScoreBadge } from "@/components/ui";
 import type { AccountVM, MomentDeVeriteVM } from "@/lib/types";
 import type { PhaseLifecycle, Segment } from "@/generated/prisma/enums";
 
@@ -43,7 +43,7 @@ function AccountCard({ account }: { account: AccountVM }) {
           <p className="text-sm font-medium text-slate-900">{account.nom}</p>
           <p className="text-xs text-slate-500">{segmentLabel[account.segment]}</p>
         </div>
-        <HealthScoreBadge score={account.healthScoreActuel} statut={account.healthScoreStatut} />
+        <RisqueScoreBadge score={account.risqueScoreActuel} statut={account.risqueScoreStatut} />
       </div>
 
       {momentAttendu && (

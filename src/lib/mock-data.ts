@@ -12,8 +12,8 @@ export const mockAccounts: AccountVM[] = [
     nom: "Aïssatou Diop",
     niveauAccompagnement: "TECH_TOUCH",
     phaseLifecycle: "ADOPTION",
-    healthScoreActuel: 82,
-    healthScoreStatut: "VERT",
+    risqueScoreActuel: 82,
+    risqueScoreStatut: "VERT",
     csmAssigne: "Fatou Sakho",
     dateCreation: "2026-02-10",
     contacts: [],
@@ -36,7 +36,7 @@ export const mockAccounts: AccountVM[] = [
       { id: "int_2", type: "APPEL_AGENT_VOCAL", titre: "Question sur crédits dormants", dateInteraction: "2026-06-20", creePar: "Agent vocal ElevenLabs" },
       { id: "int_3", type: "CAMPAGNE", titre: "Campagne relance J+7 onboarding", dateInteraction: "2026-02-17", creePar: "N8N" },
     ],
-    healthScoreHistorique: [
+    risqueScoreHistorique: [
       { id: "hs_1", score: 74, statut: "ORANGE", dateCalcul: "2026-05-01", detailCriteres: [] },
       { id: "hs_2", score: 82, statut: "VERT", dateCalcul: "2026-07-01", detailCriteres: [
         { critere: "Fréquence d'utilisation", poidsPct: 35, valeur: "5 séances/mois" },
@@ -69,8 +69,8 @@ export const mockAccounts: AccountVM[] = [
     nom: "Ibrahima Ndiaye",
     niveauAccompagnement: "TECH_TOUCH",
     phaseLifecycle: "A_RISQUE",
-    healthScoreActuel: 34,
-    healthScoreStatut: "ROUGE",
+    risqueScoreActuel: 34,
+    risqueScoreStatut: "ROUGE",
     csmAssigne: "Fatou Sakho",
     dateCreation: "2026-03-02",
     contacts: [],
@@ -91,7 +91,7 @@ export const mockAccounts: AccountVM[] = [
     interactions: [
       { id: "int_4", type: "TICKET", titre: "Réclamation : séance annulée sans remboursement", dateInteraction: "2026-06-18", creePar: "Agent vocal ElevenLabs" },
     ],
-    healthScoreHistorique: [
+    risqueScoreHistorique: [
       { id: "hs_3", score: 58, statut: "ORANGE", dateCalcul: "2026-05-01", detailCriteres: [] },
       { id: "hs_4", score: 34, statut: "ROUGE", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
@@ -117,8 +117,8 @@ export const mockAccounts: AccountVM[] = [
     nom: "Moussa Diagne",
     niveauAccompagnement: "TECH_TOUCH",
     phaseLifecycle: "ADOPTION",
-    healthScoreActuel: 51,
-    healthScoreStatut: "ORANGE",
+    risqueScoreActuel: 51,
+    risqueScoreStatut: "ORANGE",
     csmAssigne: "Fatou Sakho",
     dateCreation: "2026-04-05",
     contacts: [],
@@ -139,7 +139,7 @@ export const mockAccounts: AccountVM[] = [
     interactions: [
       { id: "int_9", type: "ACHAT", titre: "Achat pack 10 crédits", dateInteraction: "2026-05-20", creePar: "App Access" },
     ],
-    healthScoreHistorique: [
+    risqueScoreHistorique: [
       { id: "hs_11", score: 66, statut: "ORANGE", dateCalcul: "2026-06-01", detailCriteres: [] },
       { id: "hs_12", score: 51, statut: "ORANGE", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
@@ -164,8 +164,8 @@ export const mockAccounts: AccountVM[] = [
     nom: "Dakar Fitness Club",
     niveauAccompagnement: "HIGH_TOUCH",
     phaseLifecycle: "EXPANSION",
-    healthScoreActuel: 76,
-    healthScoreStatut: "VERT",
+    risqueScoreActuel: 76,
+    risqueScoreStatut: "VERT",
     csmAssigne: "Marieme Mbaye",
     dateCreation: "2025-11-20",
     contacts: [
@@ -184,7 +184,7 @@ export const mockAccounts: AccountVM[] = [
     interactions: [
       { id: "int_5", type: "NOTE", titre: "Point trimestriel Q2 réalisé", dateInteraction: "2026-06-10", creePar: "Marieme Mbaye" },
     ],
-    healthScoreHistorique: [
+    risqueScoreHistorique: [
       { id: "hs_5", score: 68, statut: "ORANGE", dateCalcul: "2026-04-01", detailCriteres: [] },
       { id: "hs_6", score: 76, statut: "VERT", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
@@ -199,8 +199,8 @@ export const mockAccounts: AccountVM[] = [
     nom: "Coach Moussa Fall",
     niveauAccompagnement: "LOW_TOUCH",
     phaseLifecycle: "ADOPTION",
-    healthScoreActuel: 55,
-    healthScoreStatut: "ORANGE",
+    risqueScoreActuel: 55,
+    risqueScoreStatut: "ORANGE",
     csmAssigne: "Marieme Mbaye",
     dateCreation: "2026-01-15",
     contacts: [],
@@ -214,7 +214,7 @@ export const mockAccounts: AccountVM[] = [
       dateSignature: "2026-01-15",
     },
     interactions: [],
-    healthScoreHistorique: [
+    risqueScoreHistorique: [
       { id: "hs_7", score: 55, statut: "ORANGE", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
     momentsDeVerite: [
@@ -228,8 +228,8 @@ export const mockAccounts: AccountVM[] = [
     nom: "Sonatel",
     niveauAccompagnement: "HIGH_TOUCH",
     phaseLifecycle: "EXPANSION",
-    healthScoreActuel: 88,
-    healthScoreStatut: "VERT",
+    risqueScoreActuel: 88,
+    risqueScoreStatut: "VERT",
     csmAssigne: "Harouna Ba",
     dateCreation: "2025-09-01",
     contacts: [
@@ -249,7 +249,7 @@ export const mockAccounts: AccountVM[] = [
       { id: "int_6", type: "NOTE", titre: "Revue DRH semestrielle", dateInteraction: "2026-06-01", creePar: "Harouna Ba" },
       { id: "int_7", type: "CAMPAGNE", titre: "Campagne interne relance collaborateurs inactifs", dateInteraction: "2026-05-15", creePar: "N8N" },
     ],
-    healthScoreHistorique: [
+    risqueScoreHistorique: [
       { id: "hs_8", score: 81, statut: "VERT", dateCalcul: "2026-04-01", detailCriteres: [] },
       { id: "hs_9", score: 88, statut: "VERT", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
@@ -264,8 +264,8 @@ export const mockAccounts: AccountVM[] = [
     nom: "Teranga Assurances",
     niveauAccompagnement: "LOW_TOUCH",
     phaseLifecycle: "ONBOARDING",
-    healthScoreActuel: 45,
-    healthScoreStatut: "ORANGE",
+    risqueScoreActuel: 45,
+    risqueScoreStatut: "ORANGE",
     csmAssigne: "Harouna Ba",
     dateCreation: "2026-06-01",
     contacts: [
@@ -284,7 +284,7 @@ export const mockAccounts: AccountVM[] = [
     interactions: [
       { id: "int_8", type: "NOTE", titre: "Kick-off onboarding + webinaire employés planifié", dateInteraction: "2026-06-05", creePar: "Harouna Ba" },
     ],
-    healthScoreHistorique: [
+    risqueScoreHistorique: [
       { id: "hs_10", score: 45, statut: "ORANGE", dateCalcul: "2026-07-01", detailCriteres: [] },
     ],
     momentsDeVerite: [

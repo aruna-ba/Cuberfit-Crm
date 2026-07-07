@@ -2,7 +2,7 @@ import type {
   Segment,
   NiveauAccompagnement,
   PhaseLifecycle,
-  StatutHealthScore,
+  StatutRisqueScore,
   StatutAbonnement,
   TypeActivitePartenaire,
   TypeInteraction,
@@ -33,7 +33,7 @@ export const phaseLifecycleLabel: Record<PhaseLifecycle, string> = {
   CHURN: "Churn",
 };
 
-export const statutHealthScoreLabel: Record<StatutHealthScore, string> = {
+export const statutRisqueScoreLabel: Record<StatutRisqueScore, string> = {
   VERT: "Sain",
   ORANGE: "À surveiller",
   ROUGE: "À risque",
@@ -58,11 +58,11 @@ export const typeInteractionLabel: Record<TypeInteraction, string> = {
   TICKET: "Ticket",
   CAMPAGNE: "Campagne",
   APPEL_AGENT_VOCAL: "Appel agent vocal",
-  HEALTH_SCORE_CHANGE: "Évolution Health Score",
+  RISQUE_SCORE_CHANGE: "Évolution Score de risque",
   NOTE: "Note",
 };
 
-export const healthScoreBadgeClass: Record<StatutHealthScore, string> = {
+export const risqueScoreBadgeClass: Record<StatutRisqueScore, string> = {
   VERT: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
   ORANGE: "bg-amber-100 text-amber-800 ring-amber-600/20",
   ROUGE: "bg-red-100 text-red-800 ring-red-600/20",

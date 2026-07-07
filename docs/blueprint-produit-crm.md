@@ -8,7 +8,7 @@ copier-coller générique.
 
 ## 0. Sources & limites
 
-Ancré sur : le prompt de cadrage initial (personas CS, Health Score, SLA — voir
+Ancré sur : le prompt de cadrage initial (personas CS, Score de risque, SLA — voir
 `~/Downloads/Prompt_CRM_Cuberfit_Fable5_v2.md`) + 5 documents Cuberfit Access
 fournis le 2026-07-03 (`Vision et cadrage produit`, `Mapping fonctionnel`,
 `Mapping technique V1`, `Story Map MVP et post-MVP`, `Priorisation post-MVP`).
@@ -62,7 +62,7 @@ Ton exemple générique (Dashboard → Clients → Entreprise → Pipeline →
 Opportunités → Marketing → Support → Partenaires → Finance → Reporting →
 Administration → Paramètres) fonctionne pour un CRM SaaS générique. Je l'adapte
 au modèle **3 personas** de Cuberfit — qui est la vraie colonne vertébrale
-métier (portefeuilles CSM, niveaux d'accompagnement, Health Score) — plutôt que
+métier (portefeuilles CSM, niveaux d'accompagnement, Score de risque) — plutôt que
 de forcer un découpage Salesforce générique par-dessus.
 
 ```
@@ -86,7 +86,7 @@ Reporting & Analytics (les 20 dashboards, rapports exportables)
  ↓
 Administration        (modération, validation, rôles, catalogue, conformité)
  ↓
-Paramètres            (Health Score, intégrations, templates, SLA)
+Paramètres            (Score de risque, intégrations, templates, SLA)
 ```
 
 Le module **Comptes** livré en P0-1 reste la fondation technique commune
@@ -101,7 +101,7 @@ même table.
 ### Dashboard
 - **Vue d'ensemble** — écran d'accueil, personnalisé par rôle (Admin voit tout,
   CSM voit son portefeuille, Sales voit son pipeline).
-- **Mes alertes du jour** — comptes Health Score rouge/orange nécessitant une
+- **Mes alertes du jour** — comptes Score de risque rouge/orange nécessitant une
   action, tickets en dépassement de SLA, renouvellements à J-90/J-30.
 - **Mon pipeline** (rôle Sales/BizDev) — opportunités par étape, prévisionnel.
 
@@ -193,7 +193,7 @@ même table.
 - **Contenu** — blog, FAQ, charte qualité, avis vérifiés.
 
 ### Paramètres
-- **Health Score** — pondérations ajustables par segment, sans redéploiement
+- **Score de risque** — pondérations ajustables par segment, sans redéploiement
   *(cadré en P0-3)*.
 - **Templates de communication** — bibliothèque email/SMS/WhatsApp.
 - **Intégrations** — ElevenLabs, WhatsApp Business (LAM), N8N, Amplitude,
@@ -210,7 +210,7 @@ Record Page / HubSpot Timeline / Intercom Inbox) :
 
 | Composant | Rôle |
 |---|---|
-| **Timeline** | Fil chronologique unifié de tous les événements (achats, tickets, campagnes, appels agent vocal, changements Health Score) — c'est la table `Interaction` du schéma P0-1. |
+| **Timeline** | Fil chronologique unifié de tous les événements (achats, tickets, campagnes, appels agent vocal, changements Score de risque) — c'est la table `Interaction` du schéma P0-1. |
 | **Documents** | Contrats, pièces KYC/KYB, exports de rapports, pièces jointes de tickets. |
 | **Emails** | Historique des échanges email liés au compte, envoi direct depuis la fiche. |
 | **WhatsApp** | Historique des conversations WhatsApp Business (LAM), envoi direct. |
@@ -229,7 +229,7 @@ Record Page / HubSpot Timeline / Intercom Inbox) :
 |---|---|---|---|---|
 | **Fiche Entreprise** | `EntrepriseQvtProfile` *(P0-1)* | Secteur, effectif, budget alloué/consommé, % activés/actifs, date renouvellement | Contacts RH, Contrat, Opportunités, Collaborateurs (Passionnés liés), Tickets, Campagnes reçues | Générer rapport QVT, Renouveler contrat, Charger collaborateurs |
 | **Fiche Contact** | `Contact` *(P0-1)* | Rôle (interlocuteur RH, gérant...), contact principal | Compte parent, emails/appels échangés | Définir comme contact principal, Envoyer email |
-| **Fiche Utilisateur** | `PassionneProfile` *(P0-1)* | Crédits (achetés/consommés/dormants/offerts), statut abonnement, no-show/annulations | Coachs associés, réservations, historique Health Score | Créditer/débiter crédits, Réinitialiser mot de passe, Suspendre le compte |
+| **Fiche Utilisateur** | `PassionneProfile` *(P0-1)* | Crédits (achetés/consommés/dormants/offerts), statut abonnement, no-show/annulations | Coachs associés, réservations, historique Score de risque | Créditer/débiter crédits, Réinitialiser mot de passe, Suspendre le compte |
 | **Fiche Coach** | `PartenaireProfile` (type = coach indépendant) | Disciplines, certifications, tarifs, taux de remplissage | Passionnés suivis (`CoachAssociation`), avis reçus | Valider certification, Booster la visibilité |
 | **Fiche Salle** | `PartenaireProfile` (type = salle/studio/espace bien-être) | Adresse, équipements, capacité par créneau, complétude profil | Activités proposées, membres de l'équipe, créneaux | Valider le profil, Gérer la capacité, Ajouter un membre |
 | **Fiche Ticket** | `Ticket` *(à créer en P0-5)* | Canal d'entrée, priorité, SLA restant, origine (manuel / auto agent vocal) | Compte, agent assigné, historique d'escalade | Escalader, Résoudre, Envoyer l'enquête CSAT |
@@ -271,15 +271,15 @@ Canal d'entrée (app/WhatsApp/email/téléphone/RVI)
   → Suivi SLA → Résolution → CSAT
 ```
 
-### 5.5 Health Score → Action *(cadré en P0-3)*
+### 5.5 Score de risque → Action *(cadré en P0-3)*
 ```
 Recalcul périodique → Statut Vert/Orange/Rouge
   Vert   → Fidéliser, proposer upsell
   Orange → Contact préventif sous 7 jours
   Rouge  → Action immédiate + notification CSM
 ```
-Chaque recalcul écrit un `HealthScoreSnapshot` et une entrée `Interaction`
-(type `HEALTH_SCORE_CHANGE`), déjà prévus dans le schéma P0-1.
+Chaque recalcul écrit un `RisqueScoreSnapshot` et une entrée `Interaction`
+(type `RISQUE_SCORE_CHANGE`), déjà prévus dans le schéma P0-1.
 
 ### 5.6 Escalade agent vocal → ticket *(cadré dans le prompt source, module D)*
 ```
@@ -329,7 +329,7 @@ Brouillon créé par le partenaire → Modération assistée IA (Claude) → Dé
 | 12 | **SLA & Qualité de service** | Support | Respect des engagements | 1ère réponse <4h, résolution 24-48h, taux de dépassement |
 | 13 | **Amplitude (produit)** | Growth, Data | Usage in-app | Funnels, rétention comportementale, événements clés (sync Amplitude) |
 | 14 | **IA & Automatisation** | Admin, CS | Performance des agents automatisés | Taux de résolution RVI (cible 80 %), taux d'escalade, actions de modération Claude |
-| 15 | **Health Score & Churn** | CS, CSM | Prévention du churn | Répartition vert/orange/rouge, comptes passés en rouge cette semaine |
+| 15 | **Score de risque & Churn** | CS, CSM | Prévention du churn | Répartition vert/orange/rouge, comptes passés en rouge cette semaine |
 | 16 | **Onboarding & Activation** | CS Ops, CSM | Suivi des moments de vérité | 1ère session réussie, 1ère réservation, 1er reporting QVT positif |
 | 17 | **Campagnes & Communication** | Marketing | Performance multicanale | Volume envoyé/livré/lu par canal (email/SMS/WhatsApp) |
 | 18 | **Compliance & KYC/KYB** | Admin, Awa | Conformité | Partenaires en attente de vérification, incidents de conformité, statut Bloom |

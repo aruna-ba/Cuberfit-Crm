@@ -12,7 +12,7 @@ import {
   statutEtapePlaybookLabel,
   canalCommunicationLabel,
 } from "@/lib/labels";
-import { AccompagnementBadge, Card, Field, HealthScoreBadge } from "@/components/ui";
+import { AccompagnementBadge, Card, Field, RisqueScoreBadge } from "@/components/ui";
 
 function formatDate(iso?: string) {
   if (!iso) return "—";
@@ -53,7 +53,7 @@ export default async function CompteDetailPage({
         </div>
         <div className="flex items-center gap-2">
           <AccompagnementBadge niveau={account.niveauAccompagnement} />
-          <HealthScoreBadge score={account.healthScoreActuel} statut={account.healthScoreStatut} />
+          <RisqueScoreBadge score={account.risqueScoreActuel} statut={account.risqueScoreStatut} />
         </div>
       </div>
 
@@ -194,12 +194,12 @@ export default async function CompteDetailPage({
         </div>
 
         <div className="flex flex-col gap-6 lg:col-span-2">
-          <Card title="Health Score — évolution">
-            {account.healthScoreHistorique.length === 0 ? (
+          <Card title="Score de risque — évolution">
+            {account.risqueScoreHistorique.length === 0 ? (
               <p className="text-sm text-slate-400">Aucun calcul disponible pour l&apos;instant.</p>
             ) : (
               <ul className="flex flex-col gap-2">
-                {[...account.healthScoreHistorique]
+                {[...account.risqueScoreHistorique]
                   .sort((a, b) => (a.dateCalcul < b.dateCalcul ? 1 : -1))
                   .map((snapshot) => (
                     <li
@@ -207,7 +207,7 @@ export default async function CompteDetailPage({
                       className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2"
                     >
                       <span className="text-sm text-slate-500">{formatDate(snapshot.dateCalcul)}</span>
-                      <HealthScoreBadge score={snapshot.score} statut={snapshot.statut} />
+                      <RisqueScoreBadge score={snapshot.score} statut={snapshot.statut} />
                     </li>
                   ))}
               </ul>

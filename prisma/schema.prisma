@@ -1,9 +1,9 @@
 // Schema Prisma — CRM Cuberfit
 // Module P0-1 : Contacts & comptes (+ tables de journalisation Vue 360° :
-// Interaction et HealthScoreSnapshot, explicitement demandées dans le
+// Interaction et RisqueScoreSnapshot, explicitement demandées dans le
 // périmètre P0-1 pour l'historique complet du compte).
 //
-// Les moteurs de calcul (Health Score P0-3, tickets/SLA P0-5, campagnes P0-4)
+// Les moteurs de calcul (Score de risque P0-3, tickets/SLA P0-5, campagnes P0-4)
 // seront ajoutés aux modules suivants — ce schéma ne pose que les fondations
 // et les points d'accroche (relations, journal d'événements) dont ils auront besoin.
 
@@ -43,8 +43,8 @@ enum PhaseLifecycle {
   CHURN
 }
 
-/// Statut couleur du Health Score (seuils définis dans le module P0-3).
-enum StatutHealthScore {
+/// Statut couleur du Score de risque (seuils définis dans le module P0-3).
+enum StatutRisqueScore {
   VERT
   ORANGE
   ROUGE
@@ -70,7 +70,7 @@ enum TypeInteraction {
   TICKET
   CAMPAGNE
   APPEL_AGENT_VOCAL
-  HEALTH_SCORE_CHANGE
+  RISQUE_SCORE_CHANGE
   NOTE
 }
 
@@ -88,7 +88,7 @@ enum TypeDeclencheurPlaybook {
   ENTREE_PHASE // le compte entre dans une PhaseLifecycle donnée
   INACTIVITE // aucune activité depuis seuilJoursInactivite jours ("client silencieux")
   RECLAMATION // usage en baisse + réclamation ("client à risque")
-  ALERTE_HEALTH_SCORE // changement de StatutHealthScore (branché au moteur P0-3)
+  ALERTE_RISQUE_SCORE // changement de StatutRisqueScore (branché au moteur P0-3)
   MANUEL // déclenché à la main par un utilisateur CRM
 }
 
@@ -156,10 +156,10 @@ model Account {
   phaseLifecycle       PhaseLifecycle       @default(ONBOARDING)
 
   // Dénormalisé pour affichage rapide (liste comptes, dashboard) ; la valeur
-  // de référence reste le dernier HealthScoreSnapshot. Recalculé par le
+  // de référence reste le dernier RisqueScoreSnapshot. Recalculé par le
   // moteur du module P0-3 à chaque nouveau snapshot.
-  healthScoreActuel Int?
-  healthScoreStatut StatutHealthScore?
+  risqueScoreActuel Int?
+  risqueScoreStatut StatutRisqueScore?
 
   csmAssigneId String?
   csmAssigne   UtilisateurCRM? @relation("CSMAssigne", fields: [csmAssigneId], references: [id])
@@ -169,7 +169,7 @@ model Account {
 
   contacts              Contact[]
   interactions          Interaction[]
-  healthScoreHistorique HealthScoreSnapshot[]
+  risqueScoreHistorique RisqueScoreSnapshot[]
 
   passionneProfile     PassionneProfile?
   partenaireProfile    PartenaireProfile?
@@ -186,7 +186,7 @@ model Account {
 
   @@index([segment])
   @@index([phaseLifecycle])
-  @@index([healthScoreStatut])
+  @@index([risqueScoreStatut])
   @@map("accounts")
 }
 
@@ -250,7 +250,7 @@ model PassionneProfile {
   creditsConsommes Int @default(0)
   creditsDormants  Int @default(0)
 
-  // No-show & annulations (entrent dans le Health Score, poids 10%)
+  // No-show & annulations (entrent dans le Score de risque, poids 10%)
   nombreNoShow      Int @default(0)
   nombreAnnulations Int @default(0)
 
@@ -329,22 +329,22 @@ model Interaction {
   @@map("interactions")
 }
 
-/// Snapshot du Health Score à un instant T, pour tracer "Health Score dans le
+/// Snapshot du Score de risque à un instant T, pour tracer "Score de risque dans le
 /// temps" en Vue 360°. Le calcul lui-même (pondérations, seuils) est le
 /// moteur du module P0-3 — ici on ne stocke que le résultat historisé.
-model HealthScoreSnapshot {
+model RisqueScoreSnapshot {
   id        String  @id @default(cuid())
   accountId String
   account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
 
   score          Int // 0-100
-  statut         StatutHealthScore
+  statut         StatutRisqueScore
   detailCriteres Json // décomposition par critère pondéré (P0-3)
 
   dateCalcul DateTime @default(now())
 
   @@index([accountId, dateCalcul])
-  @@map("health_score_snapshots")
+  @@map("risque_score_snapshots")
 }
 
 // ---------------------------------------------------------------------------
@@ -360,7 +360,7 @@ model HealthScoreSnapshot {
 // ---------------------------------------------------------------------------
 
 /// Modèle (template) de playbook — configurable sans redéploiement, à l'image
-/// des pondérations Health Score.
+/// des pondérations Score de risque.
 model Playbook {
   id          String  @id @default(cuid())
   nom         String
