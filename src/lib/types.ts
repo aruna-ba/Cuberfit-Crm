@@ -218,3 +218,33 @@ export type OpportuniteVM = {
   dateClotureprevue?: string;
   dateCloture?: string;
 };
+
+// ---------------------------------------------------------------------------
+// Module P1-2 — Analytics & reporting
+// ---------------------------------------------------------------------------
+
+export type SensAmelioration = "PLUS_EST_MIEUX" | "MOINS_EST_MIEUX";
+
+export type KpiDefinitionVM = {
+  code: string;
+  segment: Segment;
+  libelle: string;
+  unite: "%" | "jours" | "seances_mois" | "score";
+  cible: number;
+  sens: SensAmelioration;
+};
+
+export type KpiSnapshotVM = {
+  segment: Segment;
+  codeKpi: string;
+  periode: string; // premier jour du mois, ISO
+  valeur: number;
+};
+
+export type CohorteRetentionVM = {
+  segment: Segment;
+  moisCohorte: string; // ISO, premier jour du mois
+  moisObservation: number;
+  tailleInitiale: number;
+  pctRetenu: number;
+};
