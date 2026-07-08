@@ -783,3 +783,51 @@ model Opportunite {
   @@index([segment, etapeQvt])
   @@map("opportunites")
 }
+
+// ---------------------------------------------------------------------------
+// MODULE P1-2 — ANALYTICS & REPORTING (dashboards KPIs, alertes, cohortes)
+//
+// Les KPIs de référence par segment (grille section 3 du prompt cadrage) sont
+// une liste fermée et connue à l'avance (6 par segment) : leurs métadonnées
+// (libellé, unité, cible, sens d'amélioration) sont donc codées en dur côté
+// application plutôt que modélisées en base — seul l'historique des valeurs
+// mesurées (KpiSnapshot) est une donnée. Les alertes ne sont pas non plus un
+// modèle séparé : elles sont dérivées à la volée en comparant le dernier
+// KpiSnapshot de chaque KPI à sa cible, sur le même principe que les comptes
+// "ROUGE" du Score de risque en P0-3.
+// ---------------------------------------------------------------------------
+
+/// Valeur mensuelle mesurée d'un KPI pour un segment. `codeKpi` référence une
+/// des clés fixes définies dans src/lib/kpis.ts (ex. "TAUX_ACTIVATION").
+model KpiSnapshot {
+  id String @id @default(cuid())
+
+  segment Segment
+  codeKpi String
+  periode DateTime // premier jour du mois mesuré
+
+  valeur Decimal @db.Decimal(6, 2)
+
+  @@unique([segment, codeKpi, periode])
+  @@index([segment, codeKpi])
+  @@map("kpi_snapshots")
+}
+
+/// Rétention d'une cohorte mensuelle (ex. tous les Passionnés inscrits en
+/// janvier) observée à M+0, M+1, M+2... — uniquement pertinent pour les
+/// segments où l'acquisition se fait individu par individu (Passionnés,
+/// Partenaires) ; les Entreprises QVT sont trop peu nombreuses pour une
+/// analyse de cohorte et suivent plutôt un renouvellement contractuel.
+model CohorteRetention {
+  id String @id @default(cuid())
+
+  segment         Segment
+  moisCohorte     DateTime // mois d'acquisition de la cohorte
+  moisObservation Int // décalage en mois depuis l'acquisition (0, 1, 2...)
+
+  tailleInitiale Int
+  pctRetenu      Decimal @db.Decimal(5, 2)
+
+  @@unique([segment, moisCohorte, moisObservation])
+  @@map("cohortes_retention")
+}

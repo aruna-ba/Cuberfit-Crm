@@ -3,6 +3,7 @@ import { mockAccounts } from "@/lib/mock-data";
 import { mockTickets, getSlaInfo } from "@/lib/tickets";
 import { mockCampagnes } from "@/lib/communications";
 import { mockOpportunites } from "@/lib/opportunites";
+import { getAlertesActives } from "@/lib/kpis";
 import {
   segmentLabel,
   prioriteTicketLabel,
@@ -77,6 +78,8 @@ export default function DashboardPage() {
   const formatMontant = (montant: number) =>
     new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(montant);
 
+  const alertesKpi = getAlertesActives();
+
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
       <div className="mb-6">
@@ -120,6 +123,23 @@ export default function DashboardPage() {
           </div>
           <Link href="/pipeline" className="mt-4 inline-block text-xs font-medium text-[#3333CE] hover:underline">
             Voir le pipeline →
+          </Link>
+        </Card>
+
+        {/* Analytics & alertes KPI */}
+        <Card title="KPIs & alertes">
+          {alertesKpi.length === 0 ? (
+            <p className="text-sm text-[#8891B0]">Tous les KPIs sont dans leur cible.</p>
+          ) : (
+            <>
+              <p className="text-2xl font-semibold text-[#1B2340]">{alertesKpi.length}</p>
+              <p className="text-xs text-[#8891B0]">
+                KPI{alertesKpi.length !== 1 ? "s" : ""} sous leur cible, tous segments confondus
+              </p>
+            </>
+          )}
+          <Link href="/analytics" className="mt-4 inline-block text-xs font-medium text-[#3333CE] hover:underline">
+            Voir les dashboards →
           </Link>
         </Card>
 
