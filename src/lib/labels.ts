@@ -18,6 +18,11 @@ import type {
   PrioriteTicket,
   StatutTicket,
   OrigineTicket,
+  EtapePipelinePartenaire,
+  EtapePipelineQvt,
+  TypeOpportunite,
+  StatutOpportunite,
+  RoleUtilisateur,
 } from "@/generated/prisma/enums";
 
 export const segmentLabel: Record<Segment, string> = {
@@ -238,3 +243,59 @@ export const SLA_TICKET = {
   RESOLUTION_HEURES_MIN: 24,
   RESOLUTION_HEURES_MAX: 48,
 } as const;
+
+// ---------------------------------------------------------------------------
+// Module P1-1 — Pipeline & Opportunités
+// ---------------------------------------------------------------------------
+
+/// Le vrai parcours de l'Activation Manager (Vision Book), pas un pipeline
+/// commercial générique — voir docs/blueprint-produit-crm.md section 5.1.
+export const etapePipelinePartenaireLabel: Record<EtapePipelinePartenaire, string> = {
+  DECOUVERTE: "Découverte",
+  DIAGNOSTIC: "Diagnostic",
+  DEMONSTRATION: "Démonstration",
+  ENGAGEMENT: "Engagement",
+  ONBOARDING: "Onboarding",
+  SUIVI_ACTIF: "Suivi actif",
+  AMBASSADEUR: "Ambassadeur",
+};
+
+export const etapePipelineQvtLabel: Record<EtapePipelineQvt, string> = {
+  PROSPECT: "Prospect",
+  RDV_DRH: "RDV DRH",
+  DEMO: "Démo",
+  PROPOSITION: "Proposition",
+  SIGNATURE: "Signature",
+  ONBOARDING: "Onboarding",
+  ADOPTION: "Adoption",
+  RENOUVELLEMENT: "Renouvellement",
+};
+
+export const typeOpportuniteLabel: Record<TypeOpportunite, string> = {
+  NOUVELLE_AFFAIRE: "Nouvelle affaire",
+  UPSELL: "Upsell",
+  RENOUVELLEMENT: "Renouvellement",
+};
+
+export const statutOpportuniteLabel: Record<StatutOpportunite, string> = {
+  EN_COURS: "En cours",
+  GAGNEE: "Gagnée",
+  PERDUE: "Perdue",
+};
+
+export const statutOpportuniteBadgeClass: Record<StatutOpportunite, string> = {
+  EN_COURS: "bg-sky-100 text-sky-800 ring-sky-600/20",
+  GAGNEE: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
+  PERDUE: "bg-slate-100 text-slate-500 ring-slate-600/20",
+};
+
+/// Réconcilié avec l'organisation CX réelle du Vision Book (voir section 0
+/// et 5.1 du blueprint) — remplace CSM Entreprise/Partenaire et Sales/BizDev.
+export const roleUtilisateurLabel: Record<RoleUtilisateur, string> = {
+  ADMIN: "Admin",
+  ACTIVATION_MANAGER: "Activation Manager",
+  SALES_CORPORATE: "Sales Corporate",
+  ACCOUNT_MANAGER: "Account Manager",
+  CS_OPS_SUPPORT: "CS Ops / Support",
+  LECTURE_SEULE: "Lecture seule",
+};

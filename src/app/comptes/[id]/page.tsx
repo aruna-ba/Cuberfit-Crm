@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAccountById } from "@/lib/mock-data";
 import { getTicketsByAccountId } from "@/lib/tickets";
+import { getOpportunitesByAccountId } from "@/lib/opportunites";
 import {
   segmentLabel,
   phaseLifecycleLabel,
@@ -14,6 +15,10 @@ import {
   canalCommunicationLabel,
   prioriteTicketLabel,
   statutTicketLabel,
+  typeOpportuniteLabel,
+  statutOpportuniteLabel,
+  etapePipelinePartenaireLabel,
+  etapePipelineQvtLabel,
 } from "@/lib/labels";
 import { AccompagnementBadge, Card, Field, RisqueScoreBadge } from "@/components/ui";
 
@@ -40,6 +45,7 @@ export default async function CompteDetailPage({
   const account = getAccountById(id);
   if (!account) notFound();
   const tickets = getTicketsByAccountId(account.id);
+  const opportunites = getOpportunitesByAccountId(account.id);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
@@ -288,6 +294,34 @@ export default async function CompteDetailPage({
               </div>
             )}
           </Card>
+
+          {opportunites.length > 0 && (
+            <Card title={`Opportunités (${opportunites.length})`}>
+              <ul className="flex flex-col gap-2">
+                {opportunites.map((opportunite) => {
+                  const etape =
+                    opportunite.segment === "PARTENAIRE"
+                      ? opportunite.etapePartenaire
+                        ? etapePipelinePartenaireLabel[opportunite.etapePartenaire]
+                        : "—"
+                      : opportunite.etapeQvt
+                        ? etapePipelineQvtLabel[opportunite.etapeQvt]
+                        : "—";
+                  return (
+                    <li key={opportunite.id} className="rounded-md border border-slate-100 px-3 py-2">
+                      <div className="flex items-center justify-between">
+                        <Link href={`/pipeline/${opportunite.id}`} className="text-sm font-medium text-slate-900 hover:underline">
+                          {typeOpportuniteLabel[opportunite.type]}
+                        </Link>
+                        <span className="text-xs text-slate-500">{statutOpportuniteLabel[opportunite.statut]}</span>
+                      </div>
+                      <p className="text-xs text-slate-500">{etape}</p>
+                    </li>
+                  );
+                })}
+              </ul>
+            </Card>
+          )}
 
           <Card title={`Tickets (${tickets.length})`}>
             {tickets.length === 0 ? (

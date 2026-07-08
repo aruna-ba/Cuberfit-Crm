@@ -2,6 +2,7 @@ import Link from "next/link";
 import { mockAccounts } from "@/lib/mock-data";
 import { mockTickets, getSlaInfo } from "@/lib/tickets";
 import { mockCampagnes } from "@/lib/communications";
+import { mockOpportunites } from "@/lib/opportunites";
 import {
   segmentLabel,
   prioriteTicketLabel,
@@ -68,6 +69,14 @@ export default function DashboardPage() {
     .sort((a, b) => (a.dateCreation < b.dateCreation ? 1 : -1))
     .slice(0, 4);
 
+  const opportunitesEnCours = mockOpportunites.filter((o) => o.statut === "EN_COURS");
+  const pipelinePondere = opportunitesEnCours.reduce(
+    (sum, o) => sum + ((o.montantEstimeAnnuel ?? 0) * (o.probabilitePct ?? 0)) / 100,
+    0
+  );
+  const formatMontant = (montant: number) =>
+    new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(montant);
+
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
       <div className="mb-6">
@@ -97,6 +106,23 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+        {/* Pipeline */}
+        <Card title="Pipeline">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-2xl font-semibold text-[#1B2340]">{opportunitesEnCours.length}</p>
+              <p className="text-xs text-[#8891B0]">opportunité{opportunitesEnCours.length !== 1 ? "s" : ""} en cours</p>
+            </div>
+            <div className="text-right">
+              <p className="text-lg font-semibold text-[#3333CE]">{formatMontant(pipelinePondere)}</p>
+              <p className="text-xs text-[#8891B0]">pondéré</p>
+            </div>
+          </div>
+          <Link href="/pipeline" className="mt-4 inline-block text-xs font-medium text-[#3333CE] hover:underline">
+            Voir le pipeline →
+          </Link>
+        </Card>
+
         {/* Score de risque */}
         <Card title="Score de risque">
           <div className="flex items-center gap-4">

@@ -74,12 +74,16 @@ enum TypeInteraction {
   NOTE
 }
 
+/// Réconcilié le 2026-07-08 avec l'organisation CX réelle du Vision Book
+/// (voir Cuberfit_Access_PRD.docx section 15) : remplace les intitulés
+/// génériques "CSM Entreprise/Partenaire" et "Sales/BizDev" par les vrais
+/// métiers Cuberfit.
 enum RoleUtilisateur {
   ADMIN
-  CSM_ENTREPRISE
-  CSM_PARTENAIRE
+  ACTIVATION_MANAGER // Partenaires — parcours complet Découverte→Ambassadeur
+  SALES_CORPORATE // Entreprises QVT — avant signature
+  ACCOUNT_MANAGER // Entreprises QVT — après signature (renouvellement, upsell)
   CS_OPS_SUPPORT
-  SALES_BIZDEV
   LECTURE_SEULE
 }
 
@@ -142,6 +146,7 @@ model UtilisateurCRM {
   tachesAssignees       EtapeExecution[]         @relation("TacheAssignee")
   ponderationsModifiees PonderationRisqueScore[] @relation("PonderationModifiee")
   ticketsAssignes       Ticket[]                 @relation("TicketAssigne")
+  opportunitesGerees    Opportunite[]            @relation("OpportuniteProprietaire")
 
   @@map("utilisateurs_crm")
 }
@@ -191,6 +196,9 @@ model Account {
 
   // Module P0-5 : Tickets & support
   tickets Ticket[]
+
+  // Module P1-1 : Pipeline & Opportunités
+  opportunites Opportunite[]
 
   @@index([segment])
   @@index([phaseLifecycle])
@@ -695,4 +703,83 @@ model Ticket {
   @@index([accountId, statut])
   @@index([priorite, statut])
   @@map("tickets")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE P1-1 — PIPELINE & OPPORTUNITÉS (Partenaires + Entreprises QVT)
+//
+// Le pipeline Partenaires reprend le vrai parcours de l'Activation Manager
+// (Vision Book, section 14 du PRD Access) plutôt qu'un pipeline générique :
+// Découverte → Diagnostic → Démonstration → Engagement → Onboarding →
+// Suivi actif → Ambassadeur. Le pipeline QVT reste celui déjà cadré dans le
+// blueprint : Prospect → RDV DRH → Démo → Proposition → Signature →
+// Onboarding → Adoption → Renouvellement.
+// Une seule Opportunite peut appartenir à un compte Partenaire OU QVT — les
+// Passionnés n'ont pas d'opportunité commerciale. Seul le champ d'étape
+// correspondant au segment du compte est renseigné (même logique que les
+// profils par segment de P0-1).
+// ---------------------------------------------------------------------------
+
+enum EtapePipelinePartenaire {
+  DECOUVERTE
+  DIAGNOSTIC
+  DEMONSTRATION
+  ENGAGEMENT
+  ONBOARDING
+  SUIVI_ACTIF
+  AMBASSADEUR
+}
+
+enum EtapePipelineQvt {
+  PROSPECT
+  RDV_DRH
+  DEMO
+  PROPOSITION
+  SIGNATURE
+  ONBOARDING
+  ADOPTION
+  RENOUVELLEMENT
+}
+
+enum TypeOpportunite {
+  NOUVELLE_AFFAIRE
+  UPSELL
+  RENOUVELLEMENT
+}
+
+enum StatutOpportunite {
+  EN_COURS
+  GAGNEE
+  PERDUE
+}
+
+model Opportunite {
+  id String @id @default(cuid())
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  // Dupliqué depuis account.segment pour permettre l'indexation et éviter un
+  // join sur chaque vue kanban ; doit toujours correspondre à account.segment.
+  segment Segment
+  type    TypeOpportunite @default(NOUVELLE_AFFAIRE)
+
+  etapePartenaire EtapePipelinePartenaire? // renseigné si segment = PARTENAIRE
+  etapeQvt        EtapePipelineQvt? // renseigné si segment = ENTREPRISE_QVT
+
+  statut StatutOpportunite @default(EN_COURS)
+
+  montantEstimeAnnuel Decimal? @db.Decimal(12, 2)
+  probabilitePct      Int? // 0-100
+
+  proprietaireId String?
+  proprietaire   UtilisateurCRM? @relation("OpportuniteProprietaire", fields: [proprietaireId], references: [id])
+
+  dateCreation      DateTime  @default(now())
+  dateClotureprevue DateTime?
+  dateCloture       DateTime?
+
+  @@index([segment, etapePartenaire])
+  @@index([segment, etapeQvt])
+  @@map("opportunites")
 }
