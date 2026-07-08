@@ -1,0 +1,190 @@
+import type { OpportuniteVM } from "@/lib/types";
+
+/**
+ * Données de démonstration pour le module P1-1 (Pipeline & Opportunités).
+ * Pipeline Partenaires = le vrai parcours de l'Activation Manager (Vision
+ * Book) : Découverte → Diagnostic → Démonstration → Engagement → Onboarding
+ * → Suivi actif → Ambassadeur. Pipeline QVT = celui déjà cadré dans le
+ * blueprint : Prospect → RDV DRH → Démo → Proposition → Signature →
+ * Onboarding → Adoption → Renouvellement.
+ * À remplacer par de vraies requêtes Prisma une fois la base Postgres branchée.
+ */
+export const mockOpportunites: OpportuniteVM[] = [
+  // ----- Pipeline Partenaires -----
+  {
+    id: "opp_1",
+    accountId: "acc_partenaire_prospect_1",
+    accountNom: "Yoga Loft Almadies",
+    segment: "PARTENAIRE",
+    type: "NOUVELLE_AFFAIRE",
+    etapePartenaire: "DECOUVERTE",
+    statut: "EN_COURS",
+    proprietaire: "Marieme Mbaye",
+    dateCreation: "2026-07-01",
+  },
+  {
+    id: "opp_2",
+    accountId: "acc_partenaire_prospect_2",
+    accountNom: "Coach Aminata Sy",
+    segment: "PARTENAIRE",
+    type: "NOUVELLE_AFFAIRE",
+    etapePartenaire: "DIAGNOSTIC",
+    statut: "EN_COURS",
+    proprietaire: "Marieme Mbaye",
+    dateCreation: "2026-06-20",
+  },
+  {
+    id: "opp_3",
+    accountId: "acc_partenaire_prospect_3",
+    accountNom: "CrossFit Ngor",
+    segment: "PARTENAIRE",
+    type: "NOUVELLE_AFFAIRE",
+    etapePartenaire: "DEMONSTRATION",
+    statut: "EN_COURS",
+    proprietaire: "Marieme Mbaye",
+    dateCreation: "2026-06-10",
+  },
+  {
+    id: "opp_4",
+    accountId: "acc_partenaire_prospect_4",
+    accountNom: "Spa Teranga Wellness",
+    segment: "PARTENAIRE",
+    type: "NOUVELLE_AFFAIRE",
+    etapePartenaire: "ENGAGEMENT",
+    statut: "EN_COURS",
+    montantEstimeAnnuel: 3200,
+    probabilitePct: 70,
+    proprietaire: "Marieme Mbaye",
+    dateCreation: "2026-05-28",
+    dateClotureprevue: "2026-07-20",
+  },
+  {
+    id: "opp_5",
+    accountId: "acc_partenaire_2",
+    accountNom: "Coach Moussa Fall",
+    segment: "PARTENAIRE",
+    type: "NOUVELLE_AFFAIRE",
+    etapePartenaire: "ONBOARDING",
+    statut: "GAGNEE",
+    montantEstimeAnnuel: 900,
+    probabilitePct: 100,
+    proprietaire: "Marieme Mbaye",
+    dateCreation: "2026-01-10",
+    dateCloture: "2026-01-15",
+  },
+  {
+    id: "opp_6",
+    accountId: "acc_partenaire_1",
+    accountNom: "Dakar Fitness Club",
+    segment: "PARTENAIRE",
+    type: "UPSELL",
+    etapePartenaire: "SUIVI_ACTIF",
+    statut: "EN_COURS",
+    montantEstimeAnnuel: 1800,
+    probabilitePct: 60,
+    proprietaire: "Marieme Mbaye",
+    dateCreation: "2026-06-15",
+    dateClotureprevue: "2026-08-01",
+  },
+  {
+    id: "opp_7",
+    accountId: "acc_partenaire_ambassadeur_1",
+    accountNom: "Studio Pilates Sacré-Cœur",
+    segment: "PARTENAIRE",
+    type: "NOUVELLE_AFFAIRE",
+    etapePartenaire: "AMBASSADEUR",
+    statut: "GAGNEE",
+    montantEstimeAnnuel: 4500,
+    probabilitePct: 100,
+    proprietaire: "Marieme Mbaye",
+    dateCreation: "2025-08-01",
+    dateCloture: "2025-08-10",
+  },
+
+  // ----- Pipeline Entreprises QVT -----
+  {
+    id: "opp_8",
+    accountId: "acc_entreprise_prospect_1",
+    accountNom: "Banque Atlantique",
+    segment: "ENTREPRISE_QVT",
+    type: "NOUVELLE_AFFAIRE",
+    etapeQvt: "PROSPECT",
+    statut: "EN_COURS",
+    proprietaire: "Harouna Ba",
+    dateCreation: "2026-07-02",
+  },
+  {
+    id: "opp_9",
+    accountId: "acc_entreprise_prospect_2",
+    accountNom: "SGBS",
+    segment: "ENTREPRISE_QVT",
+    type: "NOUVELLE_AFFAIRE",
+    etapeQvt: "RDV_DRH",
+    statut: "EN_COURS",
+    proprietaire: "Harouna Ba",
+    dateCreation: "2026-06-25",
+  },
+  {
+    id: "opp_10",
+    accountId: "acc_entreprise_prospect_3",
+    accountNom: "Orange Sénégal",
+    segment: "ENTREPRISE_QVT",
+    type: "NOUVELLE_AFFAIRE",
+    etapeQvt: "DEMO",
+    statut: "EN_COURS",
+    montantEstimeAnnuel: 42000,
+    probabilitePct: 40,
+    proprietaire: "Harouna Ba",
+    dateCreation: "2026-06-08",
+  },
+  {
+    id: "opp_11",
+    accountId: "acc_entreprise_prospect_4",
+    accountNom: "TotalEnergies Sénégal",
+    segment: "ENTREPRISE_QVT",
+    type: "NOUVELLE_AFFAIRE",
+    etapeQvt: "PROPOSITION",
+    statut: "EN_COURS",
+    montantEstimeAnnuel: 18000,
+    probabilitePct: 55,
+    proprietaire: "Harouna Ba",
+    dateCreation: "2026-05-15",
+    dateClotureprevue: "2026-07-25",
+  },
+  {
+    id: "opp_12",
+    accountId: "acc_entreprise_2",
+    accountNom: "Teranga Assurances",
+    segment: "ENTREPRISE_QVT",
+    type: "NOUVELLE_AFFAIRE",
+    etapeQvt: "ONBOARDING",
+    statut: "GAGNEE",
+    montantEstimeAnnuel: 4000,
+    probabilitePct: 100,
+    proprietaire: "Harouna Ba",
+    dateCreation: "2026-05-01",
+    dateCloture: "2026-06-01",
+  },
+  {
+    id: "opp_13",
+    accountId: "acc_entreprise_1",
+    accountNom: "Sonatel",
+    segment: "ENTREPRISE_QVT",
+    type: "RENOUVELLEMENT",
+    etapeQvt: "RENOUVELLEMENT",
+    statut: "EN_COURS",
+    montantEstimeAnnuel: 18000,
+    probabilitePct: 80,
+    proprietaire: "Harouna Ba",
+    dateCreation: "2026-06-01",
+    dateClotureprevue: "2026-09-01",
+  },
+];
+
+export function getOpportuniteById(id: string): OpportuniteVM | undefined {
+  return mockOpportunites.find((o) => o.id === id);
+}
+
+export function getOpportunitesByAccountId(accountId: string): OpportuniteVM[] {
+  return mockOpportunites.filter((o) => o.accountId === accountId);
+}

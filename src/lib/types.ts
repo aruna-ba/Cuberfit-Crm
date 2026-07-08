@@ -17,6 +17,10 @@ import type {
   PrioriteTicket,
   StatutTicket,
   OrigineTicket,
+  EtapePipelinePartenaire,
+  EtapePipelineQvt,
+  TypeOpportunite,
+  StatutOpportunite,
 } from "@/generated/prisma/enums";
 
 export type ContactVM = {
@@ -192,4 +196,25 @@ export type TicketVM = {
   dateResolution?: string;
   csatScore?: number;
   csatCommentaire?: string;
+};
+
+// ---------------------------------------------------------------------------
+// Module P1-1 — Pipeline & Opportunités
+// ---------------------------------------------------------------------------
+
+export type OpportuniteVM = {
+  id: string;
+  accountId: string;
+  accountNom: string;
+  segment: Segment;
+  type: TypeOpportunite;
+  etapePartenaire?: EtapePipelinePartenaire;
+  etapeQvt?: EtapePipelineQvt;
+  statut: StatutOpportunite;
+  montantEstimeAnnuel?: number;
+  probabilitePct?: number;
+  proprietaire?: string;
+  dateCreation: string;
+  dateClotureprevue?: string;
+  dateCloture?: string;
 };
