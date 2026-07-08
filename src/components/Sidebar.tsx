@@ -6,6 +6,16 @@ import { CuberfitLogo } from "@/components/CuberfitLogo";
 
 type IconProps = { className?: string };
 
+function IconDashboard({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <rect x="3.5" y="3.5" width="7" height="7" rx="1.4" stroke="currentColor" strokeWidth="1.7" />
+      <rect x="13.5" y="3.5" width="7" height="4.5" rx="1.4" stroke="currentColor" strokeWidth="1.7" />
+      <rect x="13.5" y="10.5" width="7" height="10" rx="1.4" stroke="currentColor" strokeWidth="1.7" />
+      <rect x="3.5" y="13" width="7" height="7.5" rx="1.4" stroke="currentColor" strokeWidth="1.7" />
+    </svg>
+  );
+}
 function IconComptes({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
@@ -56,6 +66,7 @@ function IconParametres({ className }: IconProps) {
 }
 
 const LINKS = [
+  { href: "/", label: "Dashboard", icon: IconDashboard },
   { href: "/comptes", label: "Comptes", icon: IconComptes },
   { href: "/lifecycle", label: "Onboarding & lifecycle", icon: IconLifecycle },
   { href: "/score-de-risque", label: "Score de risque", icon: IconScore },
