@@ -54,6 +54,14 @@ function IconAnalytics({ className }: IconProps) {
     </svg>
   );
 }
+function IconFeedback({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M4 5.5A1.5 1.5 0 0 1 5.5 4h13A1.5 1.5 0 0 1 20 5.5v9a1.5 1.5 0 0 1-1.5 1.5H9l-4 3.5v-3.5H5.5A1.5 1.5 0 0 1 4 14.5Z" stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M8 9h8M8 12h5" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+    </svg>
+  );
+}
 function IconCampagnes({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" fill="none" className={className}>
@@ -88,6 +96,7 @@ const LINKS = [
   { href: "/campagnes", label: "Campagnes", icon: IconCampagnes },
   { href: "/tickets", label: "Tickets", icon: IconTickets },
   { href: "/analytics", label: "Analytics & reporting", icon: IconAnalytics },
+  { href: "/feedback", label: "NPS & feedback", icon: IconFeedback },
 ];
 
 const SETTINGS_LINK = { href: "/parametres/score-de-risque", label: "Paramètres", icon: IconParametres };

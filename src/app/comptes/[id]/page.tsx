@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getAccountById } from "@/lib/mock-data";
 import { getTicketsByAccountId } from "@/lib/tickets";
 import { getOpportunitesByAccountId } from "@/lib/opportunites";
+import { getReponsesByAccountId } from "@/lib/feedback";
 import {
   segmentLabel,
   phaseLifecycleLabel,
@@ -19,7 +20,12 @@ import {
   statutOpportuniteLabel,
   etapePipelinePartenaireLabel,
   etapePipelineQvtLabel,
+  statutTraitementVerbatimLabel,
+  statutTraitementVerbatimBadgeClass,
+  categorieNpsLabel,
+  categorieNpsBadgeClass,
 } from "@/lib/labels";
+import { categoriserScore } from "@/lib/feedback";
 import { AccompagnementBadge, Card, Field, RisqueScoreBadge } from "@/components/ui";
 
 function formatDate(iso?: string) {
@@ -46,6 +52,7 @@ export default async function CompteDetailPage({
   if (!account) notFound();
   const tickets = getTicketsByAccountId(account.id);
   const opportunites = getOpportunitesByAccountId(account.id);
+  const reponsesEnquete = getReponsesByAccountId(account.id);
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
@@ -341,6 +348,36 @@ export default async function CompteDetailPage({
               </ul>
             )}
           </Card>
+
+          {reponsesEnquete.length > 0 && (
+            <Card title={`Feedback (${reponsesEnquete.length})`}>
+              <ul className="flex flex-col gap-2">
+                {reponsesEnquete.map((reponse) => {
+                  const categorie = categoriserScore(reponse.score);
+                  return (
+                    <li key={reponse.id} className="rounded-md border border-slate-100 px-3 py-2">
+                      <div className="flex items-center justify-between gap-2">
+                        <span
+                          className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${categorieNpsBadgeClass[categorie]}`}
+                        >
+                          <span className="font-semibold">{reponse.score}</span>
+                          <span>· {categorieNpsLabel[categorie]}</span>
+                        </span>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${statutTraitementVerbatimBadgeClass[reponse.statutTraitement]}`}
+                        >
+                          {statutTraitementVerbatimLabel[reponse.statutTraitement]}
+                        </span>
+                      </div>
+                      {reponse.verbatim && (
+                        <p className="mt-1.5 text-xs text-slate-500">&ldquo;{reponse.verbatim}&rdquo;</p>
+                      )}
+                    </li>
+                  );
+                })}
+              </ul>
+            </Card>
+          )}
 
           <Card title={`Historique des interactions (Vue 360°) — ${account.interactions.length}`}>
             {account.interactions.length === 0 ? (

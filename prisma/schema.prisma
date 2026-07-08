@@ -200,6 +200,9 @@ model Account {
   // Module P1-1 : Pipeline & Opportunités
   opportunites Opportunite[]
 
+  // Module P1-3 : NPS & feedback
+  reponsesEnquete ReponseEnquete[]
+
   @@index([segment])
   @@index([phaseLifecycle])
   @@index([risqueScoreStatut])
@@ -830,4 +833,62 @@ model CohorteRetention {
 
   @@unique([segment, moisCohorte, moisObservation])
   @@map("cohortes_retention")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE P1-3 — NPS & FEEDBACK (enquêtes, verbatims, boucle produit)
+//
+// Remplace à terme les champs scalaires isolés PassionneProfile.npsScore et
+// PartenaireProfile.satisfactionScore (une seule valeur, sans historique ni
+// verbatim) par un historique complet de réponses. Reprend le même schéma
+// relationnel que Campagne/CampagneEnvoi (P0-4) : une Enquete est une vague
+// envoyée à un segment, une ReponseEnquete est la réponse individuelle d'un
+// compte. `statutTraitement` porte la boucle produit : un verbatim NOUVEAU
+// doit être lu et qualifié (EN_COURS) puis clos (TRAITE) par le CS.
+// ---------------------------------------------------------------------------
+
+enum TypeEnquete {
+  NPS_RELATIONNEL // vague périodique de satisfaction globale
+  NPS_TRANSACTIONNEL // envoyée après un moment clé (fin d'onboarding, ticket résolu...)
+}
+
+enum StatutTraitementVerbatim {
+  NOUVEAU
+  EN_COURS
+  TRAITE
+}
+
+model Enquete {
+  id String @id @default(cuid())
+
+  nom          String
+  type         TypeEnquete
+  segmentCible Segment?
+
+  dateEnvoi    DateTime
+  dateCreation DateTime @default(now())
+
+  reponses ReponseEnquete[]
+
+  @@map("enquetes")
+}
+
+model ReponseEnquete {
+  id        String  @id @default(cuid())
+  enqueteId String
+  enquete   Enquete @relation(fields: [enqueteId], references: [id], onDelete: Cascade)
+
+  accountId String
+  account   Account @relation(fields: [accountId], references: [id], onDelete: Cascade)
+
+  score            Int // 0-10, échelle NPS standard
+  verbatim         String?
+  statutTraitement StatutTraitementVerbatim @default(NOUVEAU)
+
+  dateReponse DateTime @default(now())
+
+  @@index([enqueteId])
+  @@index([accountId])
+  @@index([statutTraitement])
+  @@map("reponses_enquete")
 }

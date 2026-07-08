@@ -4,6 +4,7 @@ import { mockTickets, getSlaInfo } from "@/lib/tickets";
 import { mockCampagnes } from "@/lib/communications";
 import { mockOpportunites } from "@/lib/opportunites";
 import { getAlertesActives } from "@/lib/kpis";
+import { getVerbatimsNonTraites } from "@/lib/feedback";
 import {
   segmentLabel,
   prioriteTicketLabel,
@@ -79,6 +80,7 @@ export default function DashboardPage() {
     new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(montant);
 
   const alertesKpi = getAlertesActives();
+  const verbatimsNonTraites = getVerbatimsNonTraites();
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
@@ -140,6 +142,24 @@ export default function DashboardPage() {
           )}
           <Link href="/analytics" className="mt-4 inline-block text-xs font-medium text-[#3333CE] hover:underline">
             Voir les dashboards →
+          </Link>
+        </Card>
+
+        {/* NPS & feedback */}
+        <Card title="NPS & feedback">
+          {verbatimsNonTraites.length === 0 ? (
+            <p className="text-sm text-[#8891B0]">Aucun verbatim en attente de traitement.</p>
+          ) : (
+            <>
+              <p className="text-2xl font-semibold text-[#1B2340]">{verbatimsNonTraites.length}</p>
+              <p className="text-xs text-[#8891B0]">
+                verbatim{verbatimsNonTraites.length !== 1 ? "s" : ""} nouveau
+                {verbatimsNonTraites.length !== 1 ? "x" : ""} à traiter
+              </p>
+            </>
+          )}
+          <Link href="/feedback" className="mt-4 inline-block text-xs font-medium text-[#3333CE] hover:underline">
+            Voir le feedback →
           </Link>
         </Card>
 
