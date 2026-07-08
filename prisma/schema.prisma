@@ -142,11 +142,12 @@ model UtilisateurCRM {
   actif        Boolean         @default(true)
   dateCreation DateTime        @default(now())
 
-  comptesGeres          Account[]                @relation("CSMAssigne")
-  tachesAssignees       EtapeExecution[]         @relation("TacheAssignee")
-  ponderationsModifiees PonderationRisqueScore[] @relation("PonderationModifiee")
-  ticketsAssignes       Ticket[]                 @relation("TicketAssigne")
-  opportunitesGerees    Opportunite[]            @relation("OpportuniteProprietaire")
+  comptesGeres           Account[]                @relation("CSMAssigne")
+  tachesAssignees        EtapeExecution[]         @relation("TacheAssignee")
+  ponderationsModifiees  PonderationRisqueScore[] @relation("PonderationModifiee")
+  ticketsAssignes        Ticket[]                 @relation("TicketAssigne")
+  opportunitesGerees     Opportunite[]            @relation("OpportuniteProprietaire")
+  habilitationsModifiees HabilitationSegment[]    @relation("HabilitationModifiee")
 
   @@map("utilisateurs_crm")
 }
@@ -891,4 +892,37 @@ model ReponseEnquete {
   @@index([accountId])
   @@index([statutTraitement])
   @@map("reponses_enquete")
+}
+
+// ---------------------------------------------------------------------------
+// MODULE — RÔLES & HABILITATIONS (cloisonnement par segment)
+//
+// Le prompt de cadrage (section 4) attribue déjà chaque rôle à un
+// portefeuille : "CSM Partenaires" ne voit que les Partenaires, "Sales/
+// BizDev" et "CSM Entreprises QVT" (devenus Sales Corporate / Account
+// Manager après la réconciliation P1-1) ne voient que les Entreprises QVT.
+// Ce module formalise cette règle dans une table éditable par un Admin
+// (même principe que PonderationRisqueScore : configurable sans
+// redéploiement) plutôt que de la coder en dur. Sans système
+// d'authentification pour l'instant, l'application ne peut pas encore
+// appliquer cette règle à un "utilisateur connecté" réel — /comptes propose
+// un sélecteur "Voir en tant que" qui simule le filtrage pour valider la
+// configuration avant que l'auth ne soit branchée.
+// ---------------------------------------------------------------------------
+
+model HabilitationSegment {
+  id       String          @id @default(cuid())
+  role     RoleUtilisateur
+  segment  Segment
+  // Un rôle absent de la table pour un segment donné est considéré NON
+  // autorisé par défaut (fermeture par défaut, plus sûr qu'une ouverture
+  // par défaut pour des comptes Entreprises/Bloom sensibles).
+  autorise Boolean         @default(false)
+
+  dateDerniereMaj DateTime        @updatedAt
+  modifieParId    String?
+  modifiePar      UtilisateurCRM? @relation("HabilitationModifiee", fields: [modifieParId], references: [id])
+
+  @@unique([role, segment])
+  @@map("habilitations_segment")
 }

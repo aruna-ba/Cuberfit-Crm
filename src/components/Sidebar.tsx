@@ -86,6 +86,15 @@ function IconParametres({ className }: IconProps) {
     </svg>
   );
 }
+function IconHabilitations({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 3.5 5 6v5.5c0 5 3 8 7 9.5 4-1.5 7-4.5 7-9.5V6Z" stroke="currentColor" strokeWidth="1.7" strokeLinejoin="round" />
+      <circle cx="12" cy="11" r="1.8" stroke="currentColor" strokeWidth="1.5" />
+      <path d="M12 12.8v2.4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
 
 const LINKS = [
   { href: "/", label: "Dashboard", icon: IconDashboard },
@@ -99,7 +108,10 @@ const LINKS = [
   { href: "/feedback", label: "NPS & feedback", icon: IconFeedback },
 ];
 
-const SETTINGS_LINK = { href: "/parametres/score-de-risque", label: "Paramètres", icon: IconParametres };
+const PARAMETRES_LINKS = [
+  { href: "/parametres/score-de-risque", label: "Score de risque", icon: IconParametres },
+  { href: "/parametres/habilitations", label: "Rôles & habilitations", icon: IconHabilitations },
+];
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -133,15 +145,18 @@ export function Sidebar() {
         <CuberfitLogo size={30} />
       </div>
 
-      <nav className="flex flex-1 flex-col gap-1 overflow-y-auto px-3">
+      <nav className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto px-3">
         <span className="mb-1 mt-2 px-3 text-[11px] font-semibold uppercase tracking-wider text-[#A6ACC4]">
           CRM
         </span>
         {LINKS.map(renderLink)}
       </nav>
 
-      <div className="border-t border-[#E4E7F5] px-3 py-3">
-        {renderLink(SETTINGS_LINK)}
+      <div className="flex flex-col gap-1 border-t border-[#E4E7F5] px-3 py-3">
+        <span className="mb-1 px-3 text-[11px] font-semibold uppercase tracking-wider text-[#A6ACC4]">
+          Paramètres
+        </span>
+        {PARAMETRES_LINKS.map(renderLink)}
       </div>
     </aside>
   );
