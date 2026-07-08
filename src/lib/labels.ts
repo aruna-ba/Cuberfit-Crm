@@ -23,6 +23,8 @@ import type {
   TypeOpportunite,
   StatutOpportunite,
   RoleUtilisateur,
+  TypeEnquete,
+  StatutTraitementVerbatim,
 } from "@/generated/prisma/enums";
 
 export const segmentLabel: Record<Segment, string> = {
@@ -298,4 +300,37 @@ export const roleUtilisateurLabel: Record<RoleUtilisateur, string> = {
   ACCOUNT_MANAGER: "Account Manager",
   CS_OPS_SUPPORT: "CS Ops / Support",
   LECTURE_SEULE: "Lecture seule",
+};
+
+// ---------------------------------------------------------------------------
+// Module P1-3 — NPS & feedback
+// ---------------------------------------------------------------------------
+
+export const typeEnqueteLabel: Record<TypeEnquete, string> = {
+  NPS_RELATIONNEL: "NPS relationnel",
+  NPS_TRANSACTIONNEL: "NPS transactionnel",
+};
+
+export const statutTraitementVerbatimLabel: Record<StatutTraitementVerbatim, string> = {
+  NOUVEAU: "Nouveau",
+  EN_COURS: "En cours",
+  TRAITE: "Traité",
+};
+
+export const statutTraitementVerbatimBadgeClass: Record<StatutTraitementVerbatim, string> = {
+  NOUVEAU: "bg-red-100 text-red-800 ring-red-600/20",
+  EN_COURS: "bg-amber-100 text-amber-800 ring-amber-600/20",
+  TRAITE: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
+};
+
+export const categorieNpsLabel: Record<"PROMOTEUR" | "PASSIF" | "DETRACTEUR", string> = {
+  PROMOTEUR: "Promoteur",
+  PASSIF: "Passif",
+  DETRACTEUR: "Détracteur",
+};
+
+export const categorieNpsBadgeClass: Record<"PROMOTEUR" | "PASSIF" | "DETRACTEUR", string> = {
+  PROMOTEUR: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
+  PASSIF: "bg-slate-100 text-slate-600 ring-slate-600/20",
+  DETRACTEUR: "bg-red-100 text-red-800 ring-red-600/20",
 };

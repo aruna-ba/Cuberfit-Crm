@@ -21,6 +21,8 @@ import type {
   EtapePipelineQvt,
   TypeOpportunite,
   StatutOpportunite,
+  TypeEnquete,
+  StatutTraitementVerbatim,
 } from "@/generated/prisma/enums";
 
 export type ContactVM = {
@@ -247,4 +249,31 @@ export type CohorteRetentionVM = {
   moisObservation: number;
   tailleInitiale: number;
   pctRetenu: number;
+};
+
+// ---------------------------------------------------------------------------
+// Module P1-3 — NPS & feedback
+// ---------------------------------------------------------------------------
+
+export type CategorieNps = "PROMOTEUR" | "PASSIF" | "DETRACTEUR";
+
+export type ReponseEnqueteVM = {
+  id: string;
+  enqueteId: string;
+  accountId: string;
+  accountNom: string;
+  segment: Segment;
+  score: number;
+  verbatim?: string;
+  statutTraitement: StatutTraitementVerbatim;
+  dateReponse: string;
+};
+
+export type EnqueteVM = {
+  id: string;
+  nom: string;
+  type: TypeEnquete;
+  segmentCible?: Segment;
+  dateEnvoi: string;
+  reponses: ReponseEnqueteVM[];
 };
