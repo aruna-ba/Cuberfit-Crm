@@ -102,7 +102,7 @@ export default function ParametresScoreDeRisquePage() {
         <button
           onClick={handleSave}
           disabled={!allValid}
-          className="rounded-md bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:bg-slate-300"
+          className="rounded-md bg-[#3333CE] px-4 py-2 text-sm font-medium text-white hover:bg-[#2828a8] disabled:cursor-not-allowed disabled:bg-slate-300"
         >
           Enregistrer les pondérations
         </button>

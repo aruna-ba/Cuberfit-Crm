@@ -63,10 +63,10 @@ function AccountCard({ account }: { account: AccountVM }) {
       )}
 
       {execution && (
-        <div className="mt-2 rounded-md bg-indigo-50 px-2 py-1.5">
-          <p className="text-xs font-medium text-indigo-700">{execution.playbookNom}</p>
+        <div className="mt-2 rounded-md bg-[#EEF0FC] px-2 py-1.5">
+          <p className="text-xs font-medium text-[#3333CE]">{execution.playbookNom}</p>
           {prochaineEtape ? (
-            <p className={`text-xs ${enRetard ? "text-red-600" : "text-indigo-600"}`}>
+            <p className={`text-xs ${enRetard ? "text-red-600" : "text-[#3333CE]"}`}>
               {prochaineEtape.titre}
               {prochaineEtape.canal !== "AUCUN" && ` (${canalCommunicationLabel[prochaineEtape.canal]})`}
               {" — "}
@@ -74,7 +74,7 @@ function AccountCard({ account }: { account: AccountVM }) {
               {formatDate(prochaineEtape.dateEcheance)}
             </p>
           ) : (
-            <p className="text-xs text-indigo-600">Toutes les étapes sont faites</p>
+            <p className="text-xs text-[#3333CE]">Toutes les étapes sont faites</p>
           )}
         </div>
       )}
@@ -118,7 +118,7 @@ export default async function LifecyclePage({
               href={href}
               className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px ${
                 isActive
-                  ? "border-slate-900 text-slate-900"
+                  ? "border-[#3333CE] text-[#3333CE]"
                   : "border-transparent text-slate-500 hover:text-slate-700"
               }`}
             >

@@ -1,21 +1,21 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import { AppNav } from "@/components/AppNav";
+import localFont from "next/font/local";
+import { Sidebar } from "@/components/Sidebar";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const poppins = localFont({
+  variable: "--font-poppins",
+  src: [
+    { path: "./fonts/poppins-400.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/poppins-600.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/poppins-700.woff2", weight: "700", style: "normal" },
+  ],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: "Cuberfit CRM",
-  description: "CRM interne Cuberfit — Contacts & comptes (module P0-1)",
+  description: "CRM interne Cuberfit",
 };
 
 export default function RootLayout({
@@ -24,13 +24,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="fr"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col bg-slate-50 text-slate-900">
-        <AppNav />
-        {children}
+    <html lang="fr" className={`${poppins.variable} h-full antialiased`}>
+      <body className="flex h-full min-h-screen bg-[#F6F7FC] text-[#1B2340]">
+        <Sidebar />
+        <div className="min-w-0 flex-1 overflow-y-auto">{children}</div>
       </body>
     </html>
   );

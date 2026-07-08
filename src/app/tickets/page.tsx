@@ -54,7 +54,7 @@ export default async function TicketsPage({
                 key={tab.label}
                 href={href}
                 className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px ${
-                  isActive ? "border-slate-900 text-slate-900" : "border-transparent text-slate-500 hover:text-slate-700"
+                  isActive ? "border-[#3333CE] text-[#3333CE]" : "border-transparent text-slate-500 hover:text-slate-700"
                 }`}
               >
                 {tab.label}
