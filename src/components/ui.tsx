@@ -7,6 +7,7 @@ import {
   statutCampagneBadgeClass,
   statutCampagneLabel,
 } from "@/lib/labels";
+import { getPalierActuel } from "@/lib/fidelite";
 
 export function RisqueScoreBadge({
   score,
@@ -38,6 +39,25 @@ export function AccompagnementBadge({ niveau }: { niveau: NiveauAccompagnement }
       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${niveauAccompagnementBadgeClass[niveau]}`}
     >
       {niveauAccompagnementLabel[niveau]}
+    </span>
+  );
+}
+
+/// Badge de palier CXP — config/catalogue gérés dans Cuberfit Access, ce
+/// badge n'est qu'une lecture de la position du compte pour la fiche 360°.
+export function PalierCxpBadge({ cxpActuel }: { cxpActuel?: number }) {
+  if (cxpActuel === undefined) {
+    return (
+      <span className="inline-flex items-center rounded-full bg-[#F1F2FA] px-2.5 py-0.5 text-xs font-medium text-[#8891B0] ring-1 ring-inset ring-[#D5D9EC]">
+        Non inscrit au programme
+      </span>
+    );
+  }
+  const palier = getPalierActuel(cxpActuel);
+  return (
+    <span className="inline-flex items-center gap-1.5 rounded-full bg-[#EEF0FC] px-2.5 py-0.5 text-xs font-medium text-[#3333CE] ring-1 ring-inset ring-[#D5D9EC]">
+      <span className="font-semibold">{palier.nom}</span>
+      <span>· {cxpActuel} CXP</span>
     </span>
   );
 }
