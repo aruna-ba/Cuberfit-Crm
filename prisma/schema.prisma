@@ -277,6 +277,14 @@ model PassionneProfile {
   // NPS le plus récent déclaré (échelle -100 à 100 ; à confirmer avec Awa/Fatou)
   npsScore Int?
 
+  // Programme de fidélité CP/CXP — configuration et catalogue gérés
+  // directement dans Cuberfit Access (pas dans ce CRM, décision du
+  // 2026-07-10) ; seule la position du compte est lue ici, pour que le CS
+  // voie le contexte fidélité sur la fiche 360°. `cxpActuel` sert à dériver
+  // le palier affiché (seuils définis côté produit, non dupliqués ici).
+  cpSolde   Int?
+  cxpActuel Int?
+
   dateDerniereActivite DateTime?
 
   @@map("passionne_profiles")

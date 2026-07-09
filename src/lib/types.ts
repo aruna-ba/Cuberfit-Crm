@@ -63,6 +63,8 @@ export type PassionneProfileVM = {
   nombreNoShow: number;
   nombreAnnulations: number;
   npsScore?: number;
+  cpSolde?: number;
+  cxpActuel?: number;
   dateDerniereActivite?: string;
   coachsAssocies: { id: string; nom: string }[];
 };

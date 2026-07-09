@@ -26,7 +26,7 @@ import {
   categorieNpsBadgeClass,
 } from "@/lib/labels";
 import { categoriserScore } from "@/lib/feedback";
-import { AccompagnementBadge, Card, Field, RisqueScoreBadge } from "@/components/ui";
+import { AccompagnementBadge, Card, Field, RisqueScoreBadge, PalierCxpBadge } from "@/components/ui";
 
 function formatDate(iso?: string) {
   if (!iso) return "—";
@@ -95,6 +95,11 @@ export default async function CompteDetailPage({
                   value={`${account.passionneProfile.nombreNoShow} / ${account.passionneProfile.nombreAnnulations}`}
                 />
                 <Field label="NPS" value={account.passionneProfile.npsScore} />
+                <Field label="Solde CP" value={account.passionneProfile.cpSolde} />
+                <Field
+                  label="Palier fidélité (CXP)"
+                  value={<PalierCxpBadge cxpActuel={account.passionneProfile.cxpActuel} />}
+                />
                 <Field
                   label="Dernière activité"
                   value={formatDate(account.passionneProfile.dateDerniereActivite)}
