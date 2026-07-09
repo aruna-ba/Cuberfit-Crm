@@ -33,8 +33,8 @@ export default function ScoreDeRisquePage() {
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-slate-900">Score de risque & churn</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-xl font-semibold text-[#1B2340]">Score de risque & churn</h1>
+        <p className="text-sm text-[#5C6584]">
           Répartition vert/orange/rouge de tous les comptes, tous segments confondus.
         </p>
       </div>
@@ -45,22 +45,22 @@ export default function ScoreDeRisquePage() {
           const pct = total > 0 ? Math.round((count / total) * 100) : 0;
           const style = STATUT_STYLE[statut];
           return (
-            <div key={statut} className="rounded-lg border border-slate-200 bg-white p-4 shadow-sm">
+            <div key={statut} className="rounded-lg border border-[#E4E7F5] bg-white p-4 shadow-sm">
               <div className="flex items-center gap-2">
                 <span className={`h-2.5 w-2.5 rounded-full ${style.dot}`} />
                 <span className={`text-sm font-medium ${style.text}`}>{style.label}</span>
               </div>
-              <p className="mt-2 text-2xl font-semibold text-slate-900">
-                {count} <span className="text-sm font-normal text-slate-400">compte{count !== 1 ? "s" : ""} · {pct}%</span>
+              <p className="mt-2 text-2xl font-semibold text-[#1B2340]">
+                {count} <span className="text-sm font-normal text-[#8891B0]">compte{count !== 1 ? "s" : ""} · {pct}%</span>
               </p>
-              <p className="mt-1 text-xs text-slate-500">{SEUILS_RISQUE_SCORE[statut].action}</p>
+              <p className="mt-1 text-xs text-[#5C6584]">{SEUILS_RISQUE_SCORE[statut].action}</p>
             </div>
           );
         })}
       </div>
 
-      <div className="mb-8 rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-slate-500">
+      <div className="mb-8 rounded-lg border border-[#E4E7F5] bg-white p-5 shadow-sm">
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-[#5C6584]">
           Répartition par segment
         </h2>
         <div className="flex flex-col gap-4">
@@ -70,10 +70,10 @@ export default function ScoreDeRisquePage() {
             return (
               <div key={segment}>
                 <div className="mb-1 flex items-center justify-between text-sm">
-                  <span className="font-medium text-slate-700">{segmentLabel[segment]}</span>
-                  <span className="text-slate-400">{segmentTotal} compte{segmentTotal !== 1 ? "s" : ""}</span>
+                  <span className="font-medium text-[#5C6584]">{segmentLabel[segment]}</span>
+                  <span className="text-[#8891B0]">{segmentTotal} compte{segmentTotal !== 1 ? "s" : ""}</span>
                 </div>
-                <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-slate-100">
+                <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-[#F1F2FA]">
                   {STATUTS.map((statut) => {
                     const count = countBy(accountsInSegment, statut);
                     const widthPct = segmentTotal > 0 ? (count / segmentTotal) * 100 : 0;
@@ -94,23 +94,23 @@ export default function ScoreDeRisquePage() {
         </div>
       </div>
 
-      <div className="rounded-lg border border-slate-200 bg-white shadow-sm">
-        <div className="border-b border-slate-100 px-5 py-3">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+      <div className="rounded-lg border border-[#E4E7F5] bg-white shadow-sm">
+        <div className="border-b border-[#EEF0FC] px-5 py-3">
+          <h2 className="text-sm font-semibold uppercase tracking-wide text-[#5C6584]">
             Comptes à risque immédiat ({comptesRouges.length})
           </h2>
         </div>
         {comptesRouges.length === 0 ? (
-          <p className="px-5 py-8 text-center text-sm text-slate-400">Aucun compte en rouge actuellement.</p>
+          <p className="px-5 py-8 text-center text-sm text-[#8891B0]">Aucun compte en rouge actuellement.</p>
         ) : (
-          <ul className="divide-y divide-slate-100">
+          <ul className="divide-y divide-[#EEF0FC]">
             {comptesRouges.map((account) => (
               <li key={account.id} className="flex items-center justify-between px-5 py-3">
                 <div>
-                  <Link href={`/comptes/${account.id}`} className="text-sm font-medium text-slate-900 hover:underline">
+                  <Link href={`/comptes/${account.id}`} className="text-sm font-medium text-[#1B2340] hover:underline">
                     {account.nom}
                   </Link>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-[#5C6584]">
                     {segmentLabel[account.segment]} · CSM : {account.csmAssigne ?? "—"}
                   </p>
                 </div>

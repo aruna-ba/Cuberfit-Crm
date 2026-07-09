@@ -63,7 +63,7 @@ export default async function OpportuniteDetailPage({ params }: { params: Promis
       </div>
 
       <Card title="Détails">
-        <dl className="divide-y divide-slate-100">
+        <dl className="divide-y divide-[#EEF0FC]">
           <Field label="Compte" value={<Link href={`/comptes/${opportunite.accountId}`} className="hover:underline">{opportunite.accountNom}</Link>} />
           <Field label="Étape" value={etapeLabel} />
           <Field label="Montant estimé (annuel)" value={formatMontant(opportunite.montantEstimeAnnuel)} />

@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { defaultPonderations, type PonderationVM } from "@/lib/ponderations";
 import { segmentLabel, critereRisqueScoreLabel } from "@/lib/labels";
+import { Button } from "@/components/ui";
 import type { Segment } from "@/generated/prisma/enums";
 
 const SEGMENTS: Segment[] = ["PASSIONNE", "PARTENAIRE", "ENTREPRISE_QVT"];
@@ -20,9 +21,9 @@ function SegmentCard({
   const isValid = total === 100;
 
   return (
-    <div className="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-[#E4E7F5] bg-white p-5 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-slate-900">{segmentLabel[segment]}</h2>
+        <h2 className="text-sm font-semibold text-[#1B2340]">{segmentLabel[segment]}</h2>
         <span className={`text-sm font-medium ${isValid ? "text-emerald-600" : "text-red-600"}`}>
           Total : {total}% {isValid ? "✓" : "— doit valoir 100%"}
         </span>
@@ -30,7 +31,7 @@ function SegmentCard({
       <div className="flex flex-col gap-3">
         {ponderations.map((p) => (
           <div key={p.id} className="flex items-center gap-3">
-            <label htmlFor={p.id} className="flex-1 text-sm text-slate-700">
+            <label htmlFor={p.id} className="flex-1 text-sm text-[#5C6584]">
               {critereRisqueScoreLabel[p.critere]}
             </label>
             <input
@@ -40,9 +41,9 @@ function SegmentCard({
               max={100}
               value={p.poidsPct}
               onChange={(e) => onChange(p.id, Number(e.target.value))}
-              className="w-20 rounded-md border border-slate-300 px-2 py-1 text-right text-sm focus:border-slate-500 focus:outline-none"
+              className="w-20 rounded-lg border border-[#E4E7F5] px-2 py-1 text-right text-sm focus:border-[#3333CE] focus:outline-none focus:ring-1 focus:ring-[#3333CE]"
             />
-            <span className="w-4 text-sm text-slate-400">%</span>
+            <span className="w-4 text-sm text-[#8891B0]">%</span>
           </div>
         ))}
       </div>
@@ -80,8 +81,8 @@ export default function ParametresScoreDeRisquePage() {
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-8">
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-slate-900">Paramètres — Score de risque</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-xl font-semibold text-[#1B2340]">Paramètres — Score de risque</h1>
+        <p className="text-sm text-[#5C6584]">
           Ajuste les pondérations par segment sans redéploiement. Les seuils (Vert 70-100 · Orange
           40-69 · Rouge 0-39) restent fixes.
         </p>
@@ -99,13 +100,9 @@ export default function ParametresScoreDeRisquePage() {
       </div>
 
       <div className="mt-6 flex items-center gap-4">
-        <button
-          onClick={handleSave}
-          disabled={!allValid}
-          className="rounded-md bg-[#3333CE] px-4 py-2 text-sm font-medium text-white hover:bg-[#2828a8] disabled:cursor-not-allowed disabled:bg-slate-300"
-        >
+        <Button onClick={handleSave} disabled={!allValid}>
           Enregistrer les pondérations
-        </button>
+        </Button>
         {!allValid && (
           <span className="text-sm text-red-600">
             Chaque segment doit totaliser 100% avant de pouvoir enregistrer.

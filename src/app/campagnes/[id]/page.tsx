@@ -21,21 +21,21 @@ export default async function CampagneDetailPage({ params }: { params: Promise<{
 
   return (
     <div className="mx-auto w-full max-w-5xl px-6 py-8">
-      <Link href="/campagnes" className="text-sm text-slate-500 hover:text-slate-700">
+      <Link href="/campagnes" className="text-sm text-[#5C6584] hover:text-[#1B2340]">
         ← Retour aux campagnes
       </Link>
 
       <div className="mt-3 mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">{campagne.nom}</h1>
-          {campagne.description && <p className="text-sm text-slate-500">{campagne.description}</p>}
+          <h1 className="text-2xl font-semibold text-[#1B2340]">{campagne.nom}</h1>
+          {campagne.description && <p className="text-sm text-[#5C6584]">{campagne.description}</p>}
         </div>
         <CampagneStatutBadge statut={campagne.statut} />
       </div>
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card title="Détails">
-          <dl className="divide-y divide-slate-100">
+          <dl className="divide-y divide-[#EEF0FC]">
             <Field
               label="Cible"
               value={campagne.segmentCible ? segmentLabel[campagne.segmentCible] : "Tous segments"}
@@ -54,7 +54,7 @@ export default async function CampagneDetailPage({ params }: { params: Promise<{
 
         <Card title="Performance par statut" className="lg:col-span-2">
           {total === 0 ? (
-            <p className="text-sm text-slate-400">Campagne pas encore envoyée.</p>
+            <p className="text-sm text-[#8891B0]">Campagne pas encore envoyée.</p>
           ) : (
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
               {STATUTS_ENVOI.map((statut) => {
@@ -62,10 +62,10 @@ export default async function CampagneDetailPage({ params }: { params: Promise<{
                 if (count === 0) return null;
                 const pct = Math.round((count / total) * 100);
                 return (
-                  <div key={statut} className="rounded-md border border-slate-100 p-3">
-                    <p className="text-xs text-slate-500">{statutEnvoiCampagneLabel[statut]}</p>
-                    <p className="text-lg font-semibold text-slate-900">
-                      {count} <span className="text-xs font-normal text-slate-400">({pct}%)</span>
+                  <div key={statut} className="rounded-md border border-[#EEF0FC] p-3">
+                    <p className="text-xs text-[#5C6584]">{statutEnvoiCampagneLabel[statut]}</p>
+                    <p className="text-lg font-semibold text-[#1B2340]">
+                      {count} <span className="text-xs font-normal text-[#8891B0]">({pct}%)</span>
                     </p>
                   </div>
                 );
@@ -77,11 +77,11 @@ export default async function CampagneDetailPage({ params }: { params: Promise<{
 
       <Card title={`Envois (${total})`} className="mt-6">
         {total === 0 ? (
-          <p className="text-sm text-slate-400">Aucun envoi pour l&apos;instant.</p>
+          <p className="text-sm text-[#8891B0]">Aucun envoi pour l&apos;instant.</p>
         ) : (
-          <div className="overflow-hidden rounded-md border border-slate-100">
+          <div className="overflow-hidden rounded-md border border-[#EEF0FC]">
             <table className="w-full text-left text-sm">
-              <thead className="border-b border-slate-100 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+              <thead className="border-b border-[#EEF0FC] bg-[#F9FAFE] text-xs uppercase tracking-wide text-[#5C6584]">
                 <tr>
                   <th className="px-4 py-2 font-medium">Compte</th>
                   <th className="px-4 py-2 font-medium">Statut</th>
@@ -89,17 +89,17 @@ export default async function CampagneDetailPage({ params }: { params: Promise<{
                   <th className="px-4 py-2 font-medium">Lu le</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100">
+              <tbody className="divide-y divide-[#EEF0FC]">
                 {campagne.envois.map((envoi) => (
                   <tr key={envoi.id}>
                     <td className="px-4 py-2">
-                      <Link href={`/comptes/${envoi.accountId}`} className="text-slate-900 hover:underline">
+                      <Link href={`/comptes/${envoi.accountId}`} className="text-[#1B2340] hover:underline">
                         {envoi.accountNom}
                       </Link>
                     </td>
-                    <td className="px-4 py-2 text-slate-600">{statutEnvoiCampagneLabel[envoi.statut]}</td>
-                    <td className="px-4 py-2 text-slate-600">{formatDate(envoi.dateEnvoi)}</td>
-                    <td className="px-4 py-2 text-slate-600">{formatDate(envoi.dateLecture)}</td>
+                    <td className="px-4 py-2 text-[#5C6584]">{statutEnvoiCampagneLabel[envoi.statut]}</td>
+                    <td className="px-4 py-2 text-[#5C6584]">{formatDate(envoi.dateEnvoi)}</td>
+                    <td className="px-4 py-2 text-[#5C6584]">{formatDate(envoi.dateLecture)}</td>
                   </tr>
                 ))}
               </tbody>
