@@ -56,14 +56,14 @@ export default async function CompteDetailPage({
 
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
-      <Link href="/comptes" className="text-sm text-slate-500 hover:text-slate-700">
+      <Link href="/comptes" className="text-sm text-[#5C6584] hover:text-[#1B2340]">
         ← Retour aux comptes
       </Link>
 
       <div className="mt-3 mb-6 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-semibold text-slate-900">{account.nom}</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-2xl font-semibold text-[#1B2340]">{account.nom}</h1>
+          <p className="text-sm text-[#5C6584]">
             {segmentLabel[account.segment]} · {phaseLifecycleLabel[account.phaseLifecycle]} ·
             Compte créé le {formatDate(account.dateCreation)}
           </p>
@@ -78,7 +78,7 @@ export default async function CompteDetailPage({
         <div className="flex flex-col gap-6 lg:col-span-1">
           {account.passionneProfile && (
             <Card title="Profil Passionné">
-              <dl className="divide-y divide-slate-100">
+              <dl className="divide-y divide-[#EEF0FC]">
                 <Field label="Email" value={account.passionneProfile.email} />
                 <Field label="Téléphone" value={account.passionneProfile.telephone} />
                 <Field label="Ville" value={account.passionneProfile.ville} />
@@ -113,7 +113,7 @@ export default async function CompteDetailPage({
 
           {account.partenaireProfile && (
             <Card title="Profil Partenaire">
-              <dl className="divide-y divide-slate-100">
+              <dl className="divide-y divide-[#EEF0FC]">
                 <Field
                   label="Type d'activité"
                   value={typeActivitePartenaireLabel[account.partenaireProfile.typeActivite]}
@@ -151,7 +151,7 @@ export default async function CompteDetailPage({
 
           {account.entrepriseQvtProfile && (
             <Card title="Profil Entreprise QVT">
-              <dl className="divide-y divide-slate-100">
+              <dl className="divide-y divide-[#EEF0FC]">
                 <Field label="Secteur" value={account.entrepriseQvtProfile.secteurActivite} />
                 <Field label="Effectif" value={account.entrepriseQvtProfile.tailleEffectif} />
                 <Field
@@ -187,22 +187,22 @@ export default async function CompteDetailPage({
 
           <Card title={`Contacts (${account.contacts.length})`}>
             {account.contacts.length === 0 ? (
-              <p className="text-sm text-slate-400">Aucun contact enregistré.</p>
+              <p className="text-sm text-[#8891B0]">Aucun contact enregistré.</p>
             ) : (
               <ul className="flex flex-col gap-3">
                 {account.contacts.map((contact) => (
                   <li key={contact.id} className="text-sm">
-                    <div className="font-medium text-slate-900">
+                    <div className="font-medium text-[#1B2340]">
                       {contact.prenom} {contact.nom}
                       {contact.estContactPrincipal && (
-                        <span className="ml-2 rounded-full bg-slate-100 px-2 py-0.5 text-xs text-slate-600">
+                        <span className="ml-2 rounded-full bg-[#F1F2FA] px-2 py-0.5 text-xs text-[#5C6584]">
                           Principal
                         </span>
                       )}
                     </div>
-                    <div className="text-slate-500">{contact.role}</div>
-                    <div className="text-slate-500">{contact.email}</div>
-                    <div className="text-slate-500">{contact.telephone}</div>
+                    <div className="text-[#5C6584]">{contact.role}</div>
+                    <div className="text-[#5C6584]">{contact.email}</div>
+                    <div className="text-[#5C6584]">{contact.telephone}</div>
                   </li>
                 ))}
               </ul>
@@ -213,7 +213,7 @@ export default async function CompteDetailPage({
         <div className="flex flex-col gap-6 lg:col-span-2">
           <Card title="Score de risque — évolution">
             {account.risqueScoreHistorique.length === 0 ? (
-              <p className="text-sm text-slate-400">Aucun calcul disponible pour l&apos;instant.</p>
+              <p className="text-sm text-[#8891B0]">Aucun calcul disponible pour l&apos;instant.</p>
             ) : (
               <ul className="flex flex-col gap-2">
                 {[...account.risqueScoreHistorique]
@@ -221,9 +221,9 @@ export default async function CompteDetailPage({
                   .map((snapshot) => (
                     <li
                       key={snapshot.id}
-                      className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2"
+                      className="flex items-center justify-between rounded-md border border-[#EEF0FC] px-3 py-2"
                     >
-                      <span className="text-sm text-slate-500">{formatDate(snapshot.dateCalcul)}</span>
+                      <span className="text-sm text-[#5C6584]">{formatDate(snapshot.dateCalcul)}</span>
                       <RisqueScoreBadge score={snapshot.score} statut={snapshot.statut} />
                     </li>
                   ))}
@@ -233,18 +233,18 @@ export default async function CompteDetailPage({
 
           <Card title="Onboarding & lifecycle">
             {account.momentsDeVerite.length === 0 && account.playbookExecutions.length === 0 ? (
-              <p className="text-sm text-slate-400">Aucun playbook actif pour ce compte.</p>
+              <p className="text-sm text-[#8891B0]">Aucun playbook actif pour ce compte.</p>
             ) : (
               <div className="flex flex-col gap-4">
                 {account.momentsDeVerite.length > 0 && (
                   <ul className="flex flex-col gap-1.5">
                     {account.momentsDeVerite.map((moment) => (
                       <li key={moment.id} className="flex items-center gap-2 text-sm">
-                        <span className={moment.dateAtteint ? "text-emerald-600" : "text-slate-400"}>
+                        <span className={moment.dateAtteint ? "text-emerald-600" : "text-[#8891B0]"}>
                           {moment.dateAtteint ? "✓" : "○"}
                         </span>
-                        <span className="text-slate-700">{typeMomentDeVeriteLabel[moment.type]}</span>
-                        <span className="text-slate-400">
+                        <span className="text-[#5C6584]">{typeMomentDeVeriteLabel[moment.type]}</span>
+                        <span className="text-[#8891B0]">
                           {moment.dateAtteint
                             ? `— atteint le ${formatDate(moment.dateAtteint)}`
                             : moment.dateCibleAvant
@@ -257,10 +257,10 @@ export default async function CompteDetailPage({
                 )}
 
                 {account.playbookExecutions.map((execution) => (
-                  <div key={execution.id} className="rounded-md border border-slate-100 p-3">
+                  <div key={execution.id} className="rounded-md border border-[#EEF0FC] p-3">
                     <div className="mb-2 flex items-center justify-between">
-                      <p className="text-sm font-medium text-slate-900">{execution.playbookNom}</p>
-                      <span className="text-xs text-slate-500">
+                      <p className="text-sm font-medium text-[#1B2340]">{execution.playbookNom}</p>
+                      <span className="text-xs text-[#5C6584]">
                         {statutPlaybookExecutionLabel[execution.statut]}
                       </span>
                     </div>
@@ -272,18 +272,18 @@ export default async function CompteDetailPage({
                               etape.statut === "FAITE"
                                 ? "text-emerald-600"
                                 : etape.statut === "IGNOREE"
-                                  ? "text-slate-300"
+                                  ? "text-[#C7CBEA]"
                                   : "text-amber-500"
                             }
                           >
                             {etape.statut === "FAITE" ? "✓" : etape.statut === "IGNOREE" ? "–" : "○"}
                           </span>
-                          <span className="text-slate-700">
+                          <span className="text-[#5C6584]">
                             {etape.titre}
                             {etape.canal !== "AUCUN" && (
-                              <span className="text-slate-400"> · {canalCommunicationLabel[etape.canal]}</span>
+                              <span className="text-[#8891B0]"> · {canalCommunicationLabel[etape.canal]}</span>
                             )}
-                            <span className="text-slate-400">
+                            <span className="text-[#8891B0]">
                               {" — "}
                               {statutEtapePlaybookLabel[etape.statut]}
                               {etape.dateRealisation
@@ -315,14 +315,14 @@ export default async function CompteDetailPage({
                         ? etapePipelineQvtLabel[opportunite.etapeQvt]
                         : "—";
                   return (
-                    <li key={opportunite.id} className="rounded-md border border-slate-100 px-3 py-2">
+                    <li key={opportunite.id} className="rounded-md border border-[#EEF0FC] px-3 py-2">
                       <div className="flex items-center justify-between">
-                        <Link href={`/pipeline/${opportunite.id}`} className="text-sm font-medium text-slate-900 hover:underline">
+                        <Link href={`/pipeline/${opportunite.id}`} className="text-sm font-medium text-[#1B2340] hover:underline">
                           {typeOpportuniteLabel[opportunite.type]}
                         </Link>
-                        <span className="text-xs text-slate-500">{statutOpportuniteLabel[opportunite.statut]}</span>
+                        <span className="text-xs text-[#5C6584]">{statutOpportuniteLabel[opportunite.statut]}</span>
                       </div>
-                      <p className="text-xs text-slate-500">{etape}</p>
+                      <p className="text-xs text-[#5C6584]">{etape}</p>
                     </li>
                   );
                 })}
@@ -332,15 +332,15 @@ export default async function CompteDetailPage({
 
           <Card title={`Tickets (${tickets.length})`}>
             {tickets.length === 0 ? (
-              <p className="text-sm text-slate-400">Aucun ticket pour ce compte.</p>
+              <p className="text-sm text-[#8891B0]">Aucun ticket pour ce compte.</p>
             ) : (
               <ul className="flex flex-col gap-2">
                 {tickets.map((ticket) => (
-                  <li key={ticket.id} className="flex items-center justify-between rounded-md border border-slate-100 px-3 py-2">
-                    <Link href={`/tickets/${ticket.id}`} className="text-sm font-medium text-slate-900 hover:underline">
+                  <li key={ticket.id} className="flex items-center justify-between rounded-md border border-[#EEF0FC] px-3 py-2">
+                    <Link href={`/tickets/${ticket.id}`} className="text-sm font-medium text-[#1B2340] hover:underline">
                       #{ticket.numero} — {ticket.sujet}
                     </Link>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-[#5C6584]">
                       {prioriteTicketLabel[ticket.priorite]} · {statutTicketLabel[ticket.statut]}
                     </span>
                   </li>
@@ -355,7 +355,7 @@ export default async function CompteDetailPage({
                 {reponsesEnquete.map((reponse) => {
                   const categorie = categoriserScore(reponse.score);
                   return (
-                    <li key={reponse.id} className="rounded-md border border-slate-100 px-3 py-2">
+                    <li key={reponse.id} className="rounded-md border border-[#EEF0FC] px-3 py-2">
                       <div className="flex items-center justify-between gap-2">
                         <span
                           className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset ${categorieNpsBadgeClass[categorie]}`}
@@ -370,7 +370,7 @@ export default async function CompteDetailPage({
                         </span>
                       </div>
                       {reponse.verbatim && (
-                        <p className="mt-1.5 text-xs text-slate-500">&ldquo;{reponse.verbatim}&rdquo;</p>
+                        <p className="mt-1.5 text-xs text-[#5C6584]">&ldquo;{reponse.verbatim}&rdquo;</p>
                       )}
                     </li>
                   );
@@ -381,16 +381,16 @@ export default async function CompteDetailPage({
 
           <Card title={`Historique des interactions (Vue 360°) — ${account.interactions.length}`}>
             {account.interactions.length === 0 ? (
-              <p className="text-sm text-slate-400">Aucune interaction enregistrée.</p>
+              <p className="text-sm text-[#8891B0]">Aucune interaction enregistrée.</p>
             ) : (
-              <ol className="relative flex flex-col gap-5 border-l border-slate-200 pl-5">
+              <ol className="relative flex flex-col gap-5 border-l border-[#E4E7F5] pl-5">
                 {[...account.interactions]
                   .sort((a, b) => (a.dateInteraction < b.dateInteraction ? 1 : -1))
                   .map((interaction) => (
                     <li key={interaction.id} className="relative">
-                      <span className="absolute -left-[25px] top-1 h-2.5 w-2.5 rounded-full bg-slate-400" />
-                      <div className="flex items-center gap-2 text-xs text-slate-500">
-                        <span className="font-medium uppercase tracking-wide text-slate-600">
+                      <span className="absolute -left-[25px] top-1 h-2.5 w-2.5 rounded-full bg-[#8891B0]" />
+                      <div className="flex items-center gap-2 text-xs text-[#5C6584]">
+                        <span className="font-medium uppercase tracking-wide text-[#5C6584]">
                           {typeInteractionLabel[interaction.type]}
                         </span>
                         <span>·</span>
@@ -402,9 +402,9 @@ export default async function CompteDetailPage({
                           </>
                         )}
                       </div>
-                      <p className="text-sm font-medium text-slate-900">{interaction.titre}</p>
+                      <p className="text-sm font-medium text-[#1B2340]">{interaction.titre}</p>
                       {interaction.description && (
-                        <p className="text-sm text-slate-500">{interaction.description}</p>
+                        <p className="text-sm text-[#5C6584]">{interaction.description}</p>
                       )}
                     </li>
                   ))}

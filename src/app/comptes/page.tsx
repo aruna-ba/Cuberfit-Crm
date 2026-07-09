@@ -2,7 +2,7 @@ import Link from "next/link";
 import { mockAccounts } from "@/lib/mock-data";
 import { segmentLabel, phaseLifecycleLabel, roleUtilisateurLabel } from "@/lib/labels";
 import { getSegmentsAutorises } from "@/lib/habilitations";
-import { AccompagnementBadge, RisqueScoreBadge } from "@/components/ui";
+import { AccompagnementBadge, RisqueScoreBadge, inputClass } from "@/components/ui";
 import type { RoleUtilisateur, Segment } from "@/generated/prisma/enums";
 
 const SEGMENT_TABS: { key: Segment | "TOUS"; label: string }[] = [
@@ -48,8 +48,8 @@ export default async function ComptesPage({
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-xl font-semibold text-slate-900">Comptes</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-xl font-semibold text-[#1B2340]">Comptes</h1>
+          <p className="text-sm text-[#5C6584]">
             Vue liste des 3 segments — Passionnés, Partenaires, Entreprises QVT.
           </p>
         </div>
@@ -59,7 +59,7 @@ export default async function ComptesPage({
             name="q"
             defaultValue={q}
             placeholder="Rechercher un compte..."
-            className="w-full rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm shadow-sm focus:border-slate-400 focus:outline-none"
+            className={inputClass}
           />
           {activeSegment && <input type="hidden" name="segment" value={activeSegment} />}
           {activeRole !== "ADMIN" && <input type="hidden" name="role" value={activeRole} />}
@@ -86,7 +86,7 @@ export default async function ComptesPage({
         </span>
       </div>
 
-      <div className="mb-4 flex gap-1 border-b border-slate-200">
+      <div className="mb-4 flex gap-1 border-b border-[#E4E7F5]">
         {SEGMENT_TABS.map((tab) => {
           const isActive = (tab.key === "TOUS" && !activeSegment) || tab.key === activeSegment;
           const autorise = tab.key === "TOUS" || segmentsAutorises.includes(tab.key);
@@ -97,7 +97,7 @@ export default async function ComptesPage({
               <span
                 key={tab.key}
                 title={`${roleUtilisateurLabel[activeRole]} n'a pas accès à ce segment`}
-                className="flex cursor-not-allowed items-center gap-1 px-3 py-2 text-sm font-medium text-slate-300"
+                className="flex cursor-not-allowed items-center gap-1 px-3 py-2 text-sm font-medium text-[#C7CBEA]"
               >
                 🔒 {tab.label}
               </span>
@@ -110,7 +110,7 @@ export default async function ComptesPage({
               className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px ${
                 isActive
                   ? "border-[#3333CE] text-[#3333CE]"
-                  : "border-transparent text-slate-500 hover:text-slate-700"
+                  : "border-transparent text-[#5C6584] hover:text-[#1B2340]"
               }`}
             >
               {tab.label}
@@ -119,9 +119,9 @@ export default async function ComptesPage({
         })}
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-lg border border-[#E4E7F5] bg-white shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <thead className="border-b border-[#E4E7F5] bg-[#F9FAFE] text-xs uppercase tracking-wide text-[#8891B0]">
             <tr>
               <th className="px-4 py-3 font-medium">Compte</th>
               <th className="px-4 py-3 font-medium">Segment</th>
@@ -131,19 +131,19 @@ export default async function ComptesPage({
               <th className="px-4 py-3 font-medium">CSM assigné</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-[#EEF0FC]">
             {accounts.map((account) => (
-              <tr key={account.id} className="hover:bg-slate-50">
+              <tr key={account.id} className="hover:bg-[#F9FAFE]">
                 <td className="px-4 py-3">
                   <Link
                     href={`/comptes/${account.id}`}
-                    className="font-medium text-slate-900 hover:underline"
+                    className="font-medium text-[#1B2340] hover:underline"
                   >
                     {account.nom}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-slate-600">{segmentLabel[account.segment]}</td>
-                <td className="px-4 py-3 text-slate-600">
+                <td className="px-4 py-3 text-[#5C6584]">{segmentLabel[account.segment]}</td>
+                <td className="px-4 py-3 text-[#5C6584]">
                   {phaseLifecycleLabel[account.phaseLifecycle]}
                 </td>
                 <td className="px-4 py-3">
@@ -155,12 +155,12 @@ export default async function ComptesPage({
                     statut={account.risqueScoreStatut}
                   />
                 </td>
-                <td className="px-4 py-3 text-slate-600">{account.csmAssigne ?? "—"}</td>
+                <td className="px-4 py-3 text-[#5C6584]">{account.csmAssigne ?? "—"}</td>
               </tr>
             ))}
             {accounts.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={6} className="px-4 py-8 text-center text-[#8891B0]">
                   Aucun compte ne correspond à ce filtre.
                 </td>
               </tr>

@@ -142,7 +142,7 @@ export default async function PipelinePage({
                   <OpportuniteCard key={opportunite.id} opportunite={opportunite} />
                 ))}
                 {opportunitesEtape.length === 0 && (
-                  <p className="rounded-lg border border-dashed border-slate-200 px-3 py-4 text-center text-xs text-slate-400">
+                  <p className="rounded-lg border border-dashed border-[#E4E7F5] px-3 py-4 text-center text-xs text-[#8891B0]">
                     Aucune opportunité
                   </p>
                 )}

@@ -36,22 +36,22 @@ function AccountCard({ account }: { account: AccountVM }) {
   return (
     <Link
       href={`/comptes/${account.id}`}
-      className="block rounded-lg border border-slate-200 bg-white p-3 shadow-sm hover:border-slate-300 hover:shadow"
+      className="block rounded-lg border border-[#E4E7F5] bg-white p-3 shadow-sm hover:border-[#E4E7F5] hover:shadow"
     >
       <div className="flex items-start justify-between gap-2">
         <div>
-          <p className="text-sm font-medium text-slate-900">{account.nom}</p>
-          <p className="text-xs text-slate-500">{segmentLabel[account.segment]}</p>
+          <p className="text-sm font-medium text-[#1B2340]">{account.nom}</p>
+          <p className="text-xs text-[#5C6584]">{segmentLabel[account.segment]}</p>
         </div>
         <RisqueScoreBadge score={account.risqueScoreActuel} statut={account.risqueScoreStatut} />
       </div>
 
       {momentAttendu && (
         <div className="mt-2 flex items-center gap-1.5 text-xs">
-          <span className={momentAttendu.dateAtteint ? "text-emerald-600" : "text-slate-400"}>
+          <span className={momentAttendu.dateAtteint ? "text-emerald-600" : "text-[#8891B0]"}>
             {momentAttendu.dateAtteint ? "✓" : "○"}
           </span>
-          <span className="text-slate-500">
+          <span className="text-[#5C6584]">
             {typeMomentDeVeriteLabel[momentAttendu.type]}
             {momentAttendu.dateAtteint
               ? ` — atteint le ${formatDate(momentAttendu.dateAtteint)}`
@@ -102,13 +102,13 @@ export default async function LifecyclePage({
   return (
     <div className="mx-auto w-full max-w-[1400px] px-6 py-8">
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-slate-900">Onboarding & lifecycle</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-xl font-semibold text-[#1B2340]">Onboarding & lifecycle</h1>
+        <p className="text-sm text-[#5C6584]">
           Vue des comptes par phase, avec moments de vérité et playbooks en cours.
         </p>
       </div>
 
-      <div className="mb-5 flex gap-1 border-b border-slate-200">
+      <div className="mb-5 flex gap-1 border-b border-[#E4E7F5]">
         {SEGMENT_TABS.map((tab) => {
           const isActive = (tab.key === "TOUS" && !activeSegment) || tab.key === activeSegment;
           const href = tab.key === "TOUS" ? "/lifecycle" : `/lifecycle?segment=${tab.key}`;
@@ -119,7 +119,7 @@ export default async function LifecyclePage({
               className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px ${
                 isActive
                   ? "border-[#3333CE] text-[#3333CE]"
-                  : "border-transparent text-slate-500 hover:text-slate-700"
+                  : "border-transparent text-[#5C6584] hover:text-[#1B2340]"
               }`}
             >
               {tab.label}
@@ -139,14 +139,14 @@ export default async function LifecyclePage({
                 >
                   {phaseLifecycleLabel[phase]} · {accountsInPhase.length}
                 </span>
-                <p className="mt-1.5 text-xs text-slate-500">{phaseLifecycleObjectif[phase]}</p>
+                <p className="mt-1.5 text-xs text-[#5C6584]">{phaseLifecycleObjectif[phase]}</p>
               </div>
               <div className="flex flex-col gap-2">
                 {accountsInPhase.map((account) => (
                   <AccountCard key={account.id} account={account} />
                 ))}
                 {accountsInPhase.length === 0 && (
-                  <p className="rounded-lg border border-dashed border-slate-200 px-3 py-4 text-center text-xs text-slate-400">
+                  <p className="rounded-lg border border-dashed border-[#E4E7F5] px-3 py-4 text-center text-xs text-[#8891B0]">
                     Aucun compte
                   </p>
                 )}

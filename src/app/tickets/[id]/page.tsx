@@ -28,15 +28,15 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ i
 
   return (
     <div className="mx-auto w-full max-w-4xl px-6 py-8">
-      <Link href="/tickets" className="text-sm text-slate-500 hover:text-slate-700">
+      <Link href="/tickets" className="text-sm text-[#5C6584] hover:text-[#1B2340]">
         ← Retour aux tickets
       </Link>
 
       <div className="mt-3 mb-6 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="text-sm text-slate-400">#{ticket.numero}</p>
-          <h1 className="text-2xl font-semibold text-slate-900">{ticket.sujet}</h1>
-          <p className="mt-1 text-sm text-slate-500">
+          <p className="text-sm text-[#8891B0]">#{ticket.numero}</p>
+          <h1 className="text-2xl font-semibold text-[#1B2340]">{ticket.sujet}</h1>
+          <p className="mt-1 text-sm text-[#5C6584]">
             <Link href={`/comptes/${ticket.accountId}`} className="hover:underline">
               {ticket.accountNom}
             </Link>{" "}
@@ -55,8 +55,8 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ i
 
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Card title="Détails" className="lg:col-span-2">
-          {ticket.description && <p className="mb-4 text-sm text-slate-700">{ticket.description}</p>}
-          <dl className="divide-y divide-slate-100">
+          {ticket.description && <p className="mb-4 text-sm text-[#5C6584]">{ticket.description}</p>}
+          <dl className="divide-y divide-[#EEF0FC]">
             <Field label="Assigné à" value={ticket.assigneA} />
             <Field label="Créé le" value={formatDateTime(ticket.dateCreation)} />
             <Field label="1ère réponse" value={formatDateTime(ticket.datePremiereReponse)} />
@@ -65,14 +65,14 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ i
         </Card>
 
         <Card title="SLA">
-          <p className={`text-sm font-medium ${sla.overdue ? "text-red-600" : "text-slate-700"}`}>{sla.label}</p>
+          <p className={`text-sm font-medium ${sla.overdue ? "text-red-600" : "text-[#5C6584]"}`}>{sla.label}</p>
           {aUneSlaStandard(ticket) ? (
-            <dl className="mt-3 divide-y divide-slate-100">
+            <dl className="mt-3 divide-y divide-[#EEF0FC]">
               <Field label="Échéance 1ère réponse" value={formatDateTime(echeancePremiereReponse ?? undefined)} />
               <Field label="Échéance résolution" value={formatDateTime(echeanceResolution ?? undefined)} />
             </dl>
           ) : (
-            <p className="mt-2 text-xs text-slate-400">
+            <p className="mt-2 text-xs text-[#8891B0]">
               {ticket.priorite === "URGENTE"
                 ? "Priorité urgente : hors SLA standard, traitement immédiat."
                 : "Priorité basse : traitée via self-service en priorité, pas de SLA standard."}
@@ -85,11 +85,11 @@ export default async function TicketDetailPage({ params }: { params: Promise<{ i
         <Card title="CSAT" className="mt-6">
           {ticket.csatScore ? (
             <div>
-              <p className="text-lg font-semibold text-slate-900">{ticket.csatScore}/5</p>
-              {ticket.csatCommentaire && <p className="mt-1 text-sm text-slate-500">{ticket.csatCommentaire}</p>}
+              <p className="text-lg font-semibold text-[#1B2340]">{ticket.csatScore}/5</p>
+              {ticket.csatCommentaire && <p className="mt-1 text-sm text-[#5C6584]">{ticket.csatCommentaire}</p>}
             </div>
           ) : (
-            <p className="text-sm text-slate-400">Pas de retour CSAT pour ce ticket.</p>
+            <p className="text-sm text-[#8891B0]">Pas de retour CSAT pour ce ticket.</p>
           )}
         </Card>
       )}

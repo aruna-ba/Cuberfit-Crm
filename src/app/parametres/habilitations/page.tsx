@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState } from "react";
 import { defaultHabilitations, type HabilitationVM } from "@/lib/habilitations";
 import { segmentLabel, roleUtilisateurLabel } from "@/lib/labels";
+import { Button } from "@/components/ui";
 import type { RoleUtilisateur, Segment } from "@/generated/prisma/enums";
 
 const ROLES: RoleUtilisateur[] = [
@@ -71,7 +72,7 @@ export default function ParametresHabilitationsPage() {
                         onClick={() => toggle(role, segment)}
                         aria-pressed={autorise}
                         className={`inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                          autorise ? "bg-[#3333CE]" : "bg-slate-200"
+                          autorise ? "bg-[#3333CE]" : "bg-[#E4E7F5]"
                         }`}
                       >
                         <span
@@ -90,12 +91,7 @@ export default function ParametresHabilitationsPage() {
       </div>
 
       <div className="mt-6 flex items-center gap-4">
-        <button
-          onClick={handleSave}
-          className="rounded-md bg-[#3333CE] px-4 py-2 text-sm font-medium text-white hover:bg-[#2828a8]"
-        >
-          Enregistrer les habilitations
-        </button>
+        <Button onClick={handleSave}>Enregistrer les habilitations</Button>
         {savedMessage && <span className="text-sm text-emerald-600">{savedMessage}</span>}
       </div>
 

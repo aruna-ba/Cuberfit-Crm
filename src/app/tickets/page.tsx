@@ -37,14 +37,14 @@ export default async function TicketsPage({
   return (
     <div className="mx-auto w-full max-w-6xl px-6 py-8">
       <div className="mb-6">
-        <h1 className="text-xl font-semibold text-slate-900">Tickets & support</h1>
-        <p className="text-sm text-slate-500">
+        <h1 className="text-xl font-semibold text-[#1B2340]">Tickets & support</h1>
+        <p className="text-sm text-[#5C6584]">
           1ère réponse &lt; 4h ouvrées · résolution standard 24-48h · agent vocal cible ≈80% de
           résolution en autonomie.
         </p>
       </div>
 
-      <div className="mb-5 flex gap-1 border-b border-slate-200">
+      <div className="mb-5 flex gap-1 border-b border-[#E4E7F5]">
         {[{ key: undefined, label: "Toutes priorités" }, ...PRIORITES.map((p) => ({ key: p, label: prioriteTicketLabel[p] }))].map(
           (tab) => {
             const isActive = tab.key === activePriorite;
@@ -54,7 +54,7 @@ export default async function TicketsPage({
                 key={tab.label}
                 href={href}
                 className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px ${
-                  isActive ? "border-[#3333CE] text-[#3333CE]" : "border-transparent text-slate-500 hover:text-slate-700"
+                  isActive ? "border-[#3333CE] text-[#3333CE]" : "border-transparent text-[#5C6584] hover:text-[#1B2340]"
                 }`}
               >
                 {tab.label}
@@ -64,9 +64,9 @@ export default async function TicketsPage({
         )}
       </div>
 
-      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-lg border border-[#E4E7F5] bg-white shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="border-b border-slate-200 bg-slate-50 text-xs uppercase tracking-wide text-slate-500">
+          <thead className="border-b border-[#E4E7F5] bg-[#F9FAFE] text-xs uppercase tracking-wide text-[#5C6584]">
             <tr>
               <th className="px-4 py-3 font-medium">#</th>
               <th className="px-4 py-3 font-medium">Sujet</th>
@@ -78,37 +78,37 @@ export default async function TicketsPage({
               <th className="px-4 py-3 font-medium">SLA restant</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-100">
+          <tbody className="divide-y divide-[#EEF0FC]">
             {tickets.map(({ ticket, sla }) => (
-              <tr key={ticket.id} className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-slate-400">#{ticket.numero}</td>
+              <tr key={ticket.id} className="hover:bg-[#F9FAFE]">
+                <td className="px-4 py-3 text-[#8891B0]">#{ticket.numero}</td>
                 <td className="px-4 py-3">
-                  <Link href={`/tickets/${ticket.id}`} className="font-medium text-slate-900 hover:underline">
+                  <Link href={`/tickets/${ticket.id}`} className="font-medium text-[#1B2340] hover:underline">
                     {ticket.sujet}
                   </Link>
                 </td>
                 <td className="px-4 py-3">
-                  <Link href={`/comptes/${ticket.accountId}`} className="text-slate-600 hover:underline">
+                  <Link href={`/comptes/${ticket.accountId}`} className="text-[#5C6584] hover:underline">
                     {ticket.accountNom}
                   </Link>
                 </td>
-                <td className="px-4 py-3 text-slate-600">{canalEntreeTicketLabel[ticket.canalEntree]}</td>
+                <td className="px-4 py-3 text-[#5C6584]">{canalEntreeTicketLabel[ticket.canalEntree]}</td>
                 <td className="px-4 py-3">
                   <span className="inline-flex items-center gap-1.5">
                     <span className={`h-2 w-2 rounded-full ${PRIORITE_DOT[ticket.priorite]}`} />
                     {prioriteTicketLabel[ticket.priorite]}
                   </span>
                 </td>
-                <td className="px-4 py-3 text-slate-600">{statutTicketLabel[ticket.statut]}</td>
-                <td className="px-4 py-3 text-slate-600">{origineTicketLabel[ticket.origine]}</td>
-                <td className={`px-4 py-3 font-medium ${sla.overdue ? "text-red-600" : sla.muted ? "text-slate-400" : "text-slate-700"}`}>
+                <td className="px-4 py-3 text-[#5C6584]">{statutTicketLabel[ticket.statut]}</td>
+                <td className="px-4 py-3 text-[#5C6584]">{origineTicketLabel[ticket.origine]}</td>
+                <td className={`px-4 py-3 font-medium ${sla.overdue ? "text-red-600" : sla.muted ? "text-[#8891B0]" : "text-[#5C6584]"}`}>
                   {sla.label}
                 </td>
               </tr>
             ))}
             {tickets.length === 0 && (
               <tr>
-                <td colSpan={8} className="px-4 py-8 text-center text-slate-400">
+                <td colSpan={8} className="px-4 py-8 text-center text-[#8891B0]">
                   Aucun ticket ne correspond à ce filtre.
                 </td>
               </tr>
