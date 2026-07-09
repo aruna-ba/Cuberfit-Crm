@@ -926,3 +926,118 @@ model HabilitationSegment {
   @@unique([role, segment])
   @@map("habilitations_segment")
 }
+
+// ---------------------------------------------------------------------------
+// MODULE P2 — PROGRAMME DE FIDÉLITÉ (CP / CXP)
+//
+// Deux monnaies actées avec Harouna le 2026-07-09 :
+// - CP (CuberPoints) : convertibles, gagnés via des actions déclenchantes,
+//   dépensables dans le catalogue marketplace (ArticleCatalogue). Jamais
+//   transférables entre comptes — mais un article du catalogue peut être
+//   offert à un tiers (`offrableATiers`), donc le BIEN change de main, pas
+//   le point lui-même.
+// - CXP (CuberXP) : non convertibles, ne servent qu'à faire progresser un
+//   palier (PalierCxp) qui débloque des privilèges. Durée de vie par défaut
+//   = date anniversaire d'inscription du compte ; à cette date, le score
+//   CXP ne repart PAS à zéro mais redescend au seuil plancher du palier
+//   atteint (on ne perd que la progression au-dessus du plancher).
+//
+// Le système reste volontairement universel : un CP/CXP vaut la même chose
+// partout, mêmes paliers, même catalogue. Seule l'attribution de CP liée à
+// une dépense réelle dépend de la devise du compte — modélisé par
+// TauxConversionCp plutôt que par une logique différente par pays, pour
+// éviter l'usine à gaz évoquée par Harouna (décision actée 2026-07-09).
+// ---------------------------------------------------------------------------
+
+enum TypeBienRecompense {
+  MATERIEL
+  IMMATERIEL
+}
+
+enum StatutArticleCatalogue {
+  ACTIF
+  EPUISE
+  ARCHIVE
+}
+
+enum RegleExpirationCxp {
+  ANNIVERSAIRE_INSCRIPTION
+  PERSONNALISEE
+}
+
+/// Une action qui déclenche l'attribution de CP (inscription, réservation,
+/// avis, parrainage, challenge...). Quand `calculViaTauxConversion` est vrai,
+/// `cpAttribue` est ignoré : le montant réel est calculé à partir de
+/// TauxConversionCp et de la devise du compte (ex. achat de crédits).
+model ActionDeclencheurCp {
+  id    String  @id @default(cuid())
+  nom   String
+  actif Boolean @default(true)
+
+  cpAttribue              Int?
+  calculViaTauxConversion Boolean @default(false)
+
+  dureeVieJours Int? // null = utilise la durée de vie par défaut globale
+
+  dateDerniereMaj DateTime @updatedAt
+
+  @@map("actions_declencheur_cp")
+}
+
+/// Taux d'attribution de CP par devise pour les actions calculées
+/// automatiquement (ex. "5 CP / 1 000 XOF"). Une seule table pour tous les
+/// marchés — pas de logique différente par pays, seulement ce taux.
+model TauxConversionCp {
+  id              String  @id @default(cuid())
+  devise          String // ISO 4217 : XOF, MAD, NGN...
+  montantParUnite Decimal @db.Decimal(12, 2) // ex. 1000 (XOF)
+  cpAttribue      Decimal @db.Decimal(6, 2) // ex. 5 CP pour ce montant
+
+  @@unique([devise])
+  @@map("taux_conversion_cp")
+}
+
+/// Un palier CXP (5 au lancement). `nom` reste éditable et non figé : les
+/// noms définitifs (proposition en cours : Origin/Momentum/Ascension/
+/// Vitality/Zenith) sont en attente de validation d'équipe au 2026-07-09.
+model PalierCxp {
+  id         String  @id @default(cuid())
+  ordre      Int // 1 à 5
+  nom        String
+  seuilCxp   Int // score plancher du palier (0, 150, 300, 600, 1000...)
+  privileges String // description libre des privilèges débloqués
+  actif      Boolean @default(true)
+
+  @@unique([ordre])
+  @@map("paliers_cxp")
+}
+
+/// Configuration globale de la règle d'expiration CXP — un seul enregistrement
+/// en pratique (singleton applicatif, pas de contrainte DB dédiée).
+model ParametreCxp {
+  id                         String             @id @default(cuid())
+  regleExpiration            RegleExpirationCxp @default(ANNIVERSAIRE_INSCRIPTION)
+  dureeVieJoursPersonnalisee Int? // utilisé seulement si regleExpiration = PERSONNALISEE
+
+  dateDerniereMaj DateTime @updatedAt
+
+  @@map("parametre_cxp")
+}
+
+/// Un article du catalogue marketplace, payable en CP. Catalogue pensé pour
+/// être enrichi dans la durée, pas une liste figée au lancement.
+model ArticleCatalogue {
+  id              String                 @id @default(cuid())
+  nom             String
+  description     String?
+  coutCp          Int
+  type            TypeBienRecompense
+  offrableATiers  Boolean                @default(false)
+  stockDisponible Int? // null = illimité (bien immatériel typiquement)
+  statut          StatutArticleCatalogue @default(ACTIF)
+
+  dateCreation    DateTime @default(now())
+  dateDerniereMaj DateTime @updatedAt
+
+  @@map("articles_catalogue")
+}

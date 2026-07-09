@@ -95,6 +95,13 @@ function IconHabilitations({ className }: IconProps) {
     </svg>
   );
 }
+function IconFidelite({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className}>
+      <path d="M12 4 14.5 9.5 20.5 10.3 16 14.2 17.2 20 12 17 6.8 20 8 14.2 3.5 10.3 9.5 9.5Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
+    </svg>
+  );
+}
 
 const LINKS = [
   { href: "/", label: "Dashboard", icon: IconDashboard },
@@ -111,6 +118,7 @@ const LINKS = [
 const PARAMETRES_LINKS = [
   { href: "/parametres/score-de-risque", label: "Score de risque", icon: IconParametres },
   { href: "/parametres/habilitations", label: "Rôles & habilitations", icon: IconHabilitations },
+  { href: "/parametres/fidelite", label: "Programme fidélité", icon: IconFidelite },
 ];
 
 export function Sidebar() {

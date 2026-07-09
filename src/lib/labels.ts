@@ -25,6 +25,9 @@ import type {
   RoleUtilisateur,
   TypeEnquete,
   StatutTraitementVerbatim,
+  TypeBienRecompense,
+  StatutArticleCatalogue,
+  RegleExpirationCxp,
 } from "@/generated/prisma/enums";
 
 export const segmentLabel: Record<Segment, string> = {
@@ -333,4 +336,30 @@ export const categorieNpsBadgeClass: Record<"PROMOTEUR" | "PASSIF" | "DETRACTEUR
   PROMOTEUR: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
   PASSIF: "bg-slate-100 text-slate-600 ring-slate-600/20",
   DETRACTEUR: "bg-red-100 text-red-800 ring-red-600/20",
+};
+
+// ---------------------------------------------------------------------------
+// Module P2 — Programme de fidélité (CP / CXP)
+// ---------------------------------------------------------------------------
+
+export const typeBienRecompenseLabel: Record<TypeBienRecompense, string> = {
+  MATERIEL: "Bien matériel",
+  IMMATERIEL: "Bien immatériel",
+};
+
+export const statutArticleCatalogueLabel: Record<StatutArticleCatalogue, string> = {
+  ACTIF: "Actif",
+  EPUISE: "Épuisé",
+  ARCHIVE: "Archivé",
+};
+
+export const statutArticleCatalogueBadgeClass: Record<StatutArticleCatalogue, string> = {
+  ACTIF: "bg-emerald-100 text-emerald-800 ring-emerald-600/20",
+  EPUISE: "bg-amber-100 text-amber-800 ring-amber-600/20",
+  ARCHIVE: "bg-slate-100 text-slate-500 ring-slate-600/20",
+};
+
+export const regleExpirationCxpLabel: Record<RegleExpirationCxp, string> = {
+  ANNIVERSAIRE_INSCRIPTION: "Date anniversaire d'inscription",
+  PERSONNALISEE: "Durée personnalisée",
 };
